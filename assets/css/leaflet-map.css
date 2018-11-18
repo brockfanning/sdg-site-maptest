@@ -1,0 +1,34 @@
+#main-content #map {
+  height: 500px;
+  width: 100%; }
+  #main-content #map #loader-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background: white;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+    #main-content #map #loader-container img {
+      height: auto; }
+  #main-content #map .control {
+    background: white;
+    padding: 5px;
+    box-shadow: black 1px 1px 5px; }
+  #main-content #map .info {
+    padding: 10px;
+    text-align: right; }
+    #main-content #map .info .info-name {
+      margin-bottom: 0; }
+    #main-content #map .info .info-value {
+      font-size: large; }
+  #main-content #map .legend {
+    line-height: 18px;
+    color: #555; }
+  #main-content #map .legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7; }
