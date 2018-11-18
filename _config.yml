@@ -41,9 +41,9 @@ email_contacts:
 ###################################################################################################
 
 # Github Repo for Data
-repo_name: sdg-data
+repo_name: sdg-data-maptest
 branch: develop
-org_name: Norric1Admin
+org_name: brockfanning
 
 # Build settings
 markdown: kramdown
