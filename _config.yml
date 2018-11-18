@@ -8,7 +8,7 @@
 # Site settings
 title: Indicators For The Sustainable Development Goals
 description: Data Platform Prototype
-baseurl: "/sdg-indicators" # the subpath of your site, e.g. /blog
+baseurl: "/sdg-site-maptest" # the subpath of your site, e.g. /blog
 url: ""
 data_dir: data
 environment: staging
