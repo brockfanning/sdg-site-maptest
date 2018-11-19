@@ -24,7 +24,7 @@
       {
         min_zoom: 0,
         max_zoom: 6,
-        serviceUrl: '/sdg-indicators/public/parents.geo.json',
+        serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
         nameProperty: 'rgn17nm',
         idProperty: 'rgn17cd',
         csvDropdownColumn: 'Region',
@@ -44,7 +44,7 @@
       {
         min_zoom: 7,
         max_zoom: 20,
-        serviceUrl: '/sdg-indicators/public/children.geo.json',
+        serviceUrl: '/sdg-site-maptest/public/children.geo.json',
         nameProperty: 'lad16nm',
         idProperty: 'lad16cd',
         csvDropdownColumn: 'Local authority',
