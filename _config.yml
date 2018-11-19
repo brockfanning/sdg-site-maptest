@@ -12,20 +12,20 @@ baseurl: "/sdg-site-maptest" # the subpath of your site, e.g. /blog
 url: ""
 data_dir: data
 environment: staging
-remotedatabaseurl: "https://brockfanning.github.io/sdg-data-maptest"
+remotedatabaseurl: "http://brock.tips/sdg-data-maptest"
 # permalink: /news/:year/:month/:day/:title.html
 
 jekyll_get_data:
   - data: meta
-    json: 'https://brockfanning.github.io/sdg-data-maptest/meta/all.json'
+    json: 'http://brock.tips/sdg-data-maptest/meta/all.json'
     # cache: true
     # directory: 'remotedata'
   - data: headlines
-    json: 'https://brockfanning.github.io/sdg-data-maptest/headline/all.json'
+    json: 'http://brock.tips/sdg-data-maptest/headline/all.json'
     # cache: true
     # directory: 'remotedata'
   - data: schema
-    json: 'https://brockfanning.github.io/sdg-data-maptest/meta/schema.json'
+    json: 'http://brock.tips/sdg-data-maptest/meta/schema.json'
   - data: translations
     # Pin to version 0.2.0 of the translation repository.
     json: 'https://opendataenterprise.github.io/sdg-translations/translations-0.2.0.json'
