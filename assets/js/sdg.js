@@ -28,7 +28,7 @@
     geoLayers: [
       {
         min_zoom: 0,
-        max_zoom: 6,
+        max_zoom: 20,
         serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
         nameProperty: 'rgn17nm',
         idProperty: 'rgn17cd',
@@ -41,9 +41,10 @@
           fillOpacity: 0.7
         },
         styleOptionsSelected: {
-          weight: 2,
+          weight: 3,
           color: '#555',
           dashArray: '3',
+          fill: false,
         }
       },
       {
