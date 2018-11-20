@@ -1,6 +1,11 @@
 /**
  * Notes:
  *
+ * Need to simplify and optimize for mobile use. Start there.
+ * 1. No integration with filters at all.
+ * 2. Simple 2 layers with zoom show/hide.
+ * 3. Stop there and check performance on mobile.
+ *
  * On load:
  *  - load all GeoJSON files and attach them as layers, but only one will be visible
  *  - each layer has its own style options
@@ -147,11 +152,14 @@
         GeoCode: geocode,
         Year: this.currentYear,
       }
+      /*
       if (this.viewObj._model.selectedFields.length) {
         this.viewObj._model.selectedFields.forEach(function(selectedField) {
-          conditions[selectedField.field] = selectedField.values;
+          // For now just use the first selection.
+          conditions[selectedField.field] = selectedField.values[0];
         });
       }
+      */
       var matches = _.where(this.options.geoData, conditions);
       if (matches.length) {
         return matches[0];
@@ -165,7 +173,8 @@
     getColor: function(props, idProperty) {
       var thisID = props[idProperty];
       // First filter out most features if there is a selected parent feature.
-      if (false && this.selectedFeature) {
+      /*
+      if (this.selectedFeature) {
         // If there is a selected feature, only display this one if it is
         // either the selected feature, or a child of it, or is a child of
         // the same parent.
@@ -180,8 +189,10 @@
           return this.options.noValueColor;
         }
       }
+      */
       // Otherwise return a color based on the data.
       var localData = this.getData(thisID);
+      //console.log(localData);
       return (localData) ? this.colorScale(localData['Value']).hex() : this.options.noValueColor;
     },
 
@@ -278,7 +289,6 @@
       $.when.apply($, geoURLs).done(function() {
 
         function onEachFeature(feature, layer) {
-          //feature.sdgLayerOptions = this.sdgLayerOptions;
           layer.on({
             click: clickHandler,
           });
@@ -331,7 +341,9 @@
           highlightFeature(layer);
 
           // Select dropdown if necessary.
+          /*
           if (layer.options.sdgLayer.csvDropdownColumn) {
+            console.log('foo');
             var csvDropdownColumn = layer.options.sdgLayer.csvDropdownColumn;
             var geocode = layer.feature.properties[layer.options.sdgLayer.idProperty];
             var csvData = plugin.getData(geocode);
@@ -341,6 +353,9 @@
                 'values': [],
               }
             ]
+
+            // This is messed up -- it is clobbering what is already there.
+
             // If the CSV data contains it, use it.
             if (csvData[csvDropdownColumn]) {
               fields[0].values.push(csvData[csvDropdownColumn]);
@@ -349,18 +364,24 @@
             else {
               fields[0].values.push(layer.feature.properties[layer.options.sdgLayer.nameProperty]);
             }
+            console.log(fields);
             // In order to imitate a user click, we have to update the model.
+
             plugin.viewObj._model.updateSelectedFields(fields);
+
             // And then we have to manually check the checkbox.
             var checkboxes = document.querySelectorAll('input[data-field="' + csvDropdownColumn + '"]');
             checkboxes.forEach(function(checkbox) {
               if (checkbox.value == fields[0].values[0]) {
+                console.log('checking box');
+                console.log(checkbox);
                 checkbox.checked = true;
               }
             });
 
             plugin.updateColors();
           }
+          */
         }
       });
 
