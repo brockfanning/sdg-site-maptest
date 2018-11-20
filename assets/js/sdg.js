@@ -41,7 +41,7 @@
           fillOpacity: 0.7
         },
         styleOptionsSelected: {
-          weight: 3,
+          weight: 5,
           color: '#555',
           dashArray: '3',
           fill: false,
