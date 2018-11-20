@@ -1,6 +1,11 @@
 !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports,require("d3-array"),require("d3-axis"),require("d3-dispatch"),require("d3-drag"),require("d3-ease"),require("d3-scale"),require("d3-selection")):"function"==typeof define&&define.amd?define(["exports","d3-array","d3-axis","d3-dispatch","d3-drag","d3-ease","d3-scale","d3-selection"],e):e(t.d3=t.d3||{},t.d3,t.d3,t.d3,t.d3,t.d3,t.d3,t.d3)}(this,function(t,e,a,r,n,l,i,s){"use strict";function c(){function t(t){z=t.selection?t.selection():t,M=h[0]instanceof Date?i.scaleTime():i.scaleLinear(),M=M.domain(h).range([0,m]).clamp(!0),D=i.scaleLinear().range(M.range()).domain(M.range()).clamp(!0),q=q||M.tickFormat(),z.selectAll(".axis").data([null]).enter().append("g").attr("transform","translate(0,7)").attr("class","axis");var e=z.selectAll(".slider").data([null]),r=e.enter().append("g").attr("class","slider").attr("cursor","ew-resize").attr("transform","translate(0,0)").call(n.drag().on("start",function(){s.select(this).classed("active",!0);var t=D(s.event.x),a=u(M.invert(t));f(a),A.call("start",e,a),d(a)}).on("drag",function(){var t=D(s.event.x),a=u(M.invert(t));f(a),A.call("drag",e,a),d(a)}).on("end",function(){s.select(this).classed("active",!1);var t=D(s.event.x),a=u(M.invert(t));f(a),A.call("end",e,a),d(a)}));r.append("line").attr("class","track").attr("x1",0).attr("y1",0).attr("y2",0).attr("stroke","#bbb").attr("stroke-width",6).attr("stroke-linecap","round"),r.append("line").attr("class","track-inset").attr("x1",0).attr("y1",0).attr("y2",0).attr("stroke","#eee").attr("stroke-width",4).attr("stroke-linecap","round"),r.append("line").attr("class","track-overlay").attr("x1",0).attr("y1",0).attr("y2",0).attr("stroke","transparent").attr("stroke-width",40).attr("stroke-linecap","round").merge(e.select(".track-overlay"));var l=r.append("g").attr("class","parameter-value").attr("transform","translate("+M(p)+",0)").attr("font-family","sans-serif").attr("text-anchor","middle");l.append("path").attr("d",g).attr("fill","white").attr("stroke","#777"),x&&l.append("text").attr("font-size",10).attr("y",27).attr("dy",".71em").text(q(p)),t.select(".track").attr("x2",M.range()[1]),t.select(".track-inset").attr("x2",M.range()[1]),t.select(".track-overlay").attr("x2",M.range()[1]),t.select(".axis").call(a.axisBottom(M).tickFormat(q).ticks(w).tickValues(y)),z.select(".axis").select(".domain").remove(),t.select(".axis").attr("transform","translate(0,7)"),t.selectAll(".axis text").attr("fill","#aaa").attr("y",20).attr("dy",".71em").attr("text-anchor","middle"),t.selectAll(".axis line").attr("stroke","#aaa"),t.select(".parameter-value").attr("transform","translate("+M(p)+",0)"),c()}function c(){if(x){var t=[];z.selectAll(".axis .tick").each(function(e){t.push(Math.abs(e-p))});var a=e.scan(t);z.selectAll(".axis .tick text").attr("opacity",function(t,e){return e===a?0:1})}}function u(t){if(k){var a=(t-h[0])%k,r=t-a;return 2*a>k&&(r+=k),t instanceof Date?new Date(r):r}if(b){var n=e.scan(b.map(function(e){return Math.abs(t-e)}));return b[n]}return t}function d(e){p!==e&&(p=e,A.call("onchange",t,e),c())}function f(t,e){e=void 0!==e&&e;var a=z.select(".parameter-value");e&&(a=a.transition().ease(l.easeQuadOut).duration(o)),a.attr("transform","translate("+M(t)+",0)"),x&&z.select(".parameter-value text").text(q(t))}var p=0,v=0,h=[0,10],m=100,x=!0,g="M-5.5,-5.5v10l6,5.5l6,-5.5v-10z",k=null,y=null,b=null,q=null,w=null,A=r.dispatch("onchange","start","end","drag"),z=null,M=null,D=null;return t.min=function(e){return arguments.length?(h[0]=e,t):h[0]},t.max=function(e){return arguments.length?(h[1]=e,t):h[1]},t.domain=function(e){return arguments.length?(h=e,t):h},t.width=function(e){return arguments.length?(m=e,t):m},t.tickFormat=function(e){return arguments.length?(q=e,t):q},t.ticks=function(e){return arguments.length?(w=e,t):w},t.value=function(e){if(!arguments.length)return p;var a=D(M(e)),r=u(M.invert(a));return f(r,!0),d(r),t},t.default=function(e){return arguments.length?(v=e,p=e,t):v},t.step=function(e){return arguments.length?(k=e,t):k},t.tickValues=function(e){return arguments.length?(y=e,t):y},t.marks=function(e){return arguments.length?(b=e,t):b},t.handle=function(e){return arguments.length?(g=e,t):g},t.displayValue=function(e){return arguments.length?(x=e,t):x},t.on=function(){var e=A.on.apply(A,arguments);return e===A?t:e},t}var o=200;t.sliderHorizontal=function(){return c()},Object.defineProperty(t,"__esModule",{value:!0})});/**
  * Notes:
  *
+ * Need to simplify and optimize for mobile use. Start there.
+ * 1. No integration with filters at all.
+ * 2. Simple 2 layers with zoom show/hide.
+ * 3. Stop there and check performance on mobile.
+ *
  * On load:
  *  - load all GeoJSON files and attach them as layers, but only one will be visible
  *  - each layer has its own style options
@@ -147,11 +152,14 @@
         GeoCode: geocode,
         Year: this.currentYear,
       }
+      /*
       if (this.viewObj._model.selectedFields.length) {
         this.viewObj._model.selectedFields.forEach(function(selectedField) {
-          conditions[selectedField.field] = selectedField.values;
+          // For now just use the first selection.
+          conditions[selectedField.field] = selectedField.values[0];
         });
       }
+      */
       var matches = _.where(this.options.geoData, conditions);
       if (matches.length) {
         return matches[0];
@@ -165,7 +173,8 @@
     getColor: function(props, idProperty) {
       var thisID = props[idProperty];
       // First filter out most features if there is a selected parent feature.
-      if (false && this.selectedFeature) {
+      /*
+      if (this.selectedFeature) {
         // If there is a selected feature, only display this one if it is
         // either the selected feature, or a child of it, or is a child of
         // the same parent.
@@ -180,8 +189,10 @@
           return this.options.noValueColor;
         }
       }
+      */
       // Otherwise return a color based on the data.
       var localData = this.getData(thisID);
+      //console.log(localData);
       return (localData) ? this.colorScale(localData['Value']).hex() : this.options.noValueColor;
     },
 
@@ -278,7 +289,6 @@
       $.when.apply($, geoURLs).done(function() {
 
         function onEachFeature(feature, layer) {
-          //feature.sdgLayerOptions = this.sdgLayerOptions;
           layer.on({
             click: clickHandler,
           });
@@ -331,7 +341,9 @@
           highlightFeature(layer);
 
           // Select dropdown if necessary.
+          /*
           if (layer.options.sdgLayer.csvDropdownColumn) {
+            console.log('foo');
             var csvDropdownColumn = layer.options.sdgLayer.csvDropdownColumn;
             var geocode = layer.feature.properties[layer.options.sdgLayer.idProperty];
             var csvData = plugin.getData(geocode);
@@ -341,6 +353,9 @@
                 'values': [],
               }
             ]
+
+            // This is messed up -- it is clobbering what is already there.
+
             // If the CSV data contains it, use it.
             if (csvData[csvDropdownColumn]) {
               fields[0].values.push(csvData[csvDropdownColumn]);
@@ -349,18 +364,24 @@
             else {
               fields[0].values.push(layer.feature.properties[layer.options.sdgLayer.nameProperty]);
             }
+            console.log(fields);
             // In order to imitate a user click, we have to update the model.
+
             plugin.viewObj._model.updateSelectedFields(fields);
+
             // And then we have to manually check the checkbox.
             var checkboxes = document.querySelectorAll('input[data-field="' + csvDropdownColumn + '"]');
             checkboxes.forEach(function(checkbox) {
               if (checkbox.value == fields[0].values[0]) {
+                console.log('checking box');
+                console.log(checkbox);
                 checkbox.checked = true;
               }
             });
 
             plugin.updateColors();
           }
+          */
         }
       });
 
