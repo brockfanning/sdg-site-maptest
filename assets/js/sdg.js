@@ -37,14 +37,15 @@
           weight: 1,
           opacity: 1,
           color: '#888',
-          dashArray: '3',
+          dashArray: '4',
+          dashOffset: '1',
           fillOpacity: 0.7
         },
         styleOptionsSelected: {
           weight: 5,
           color: '#555',
-          dashArray: '3',
-          fill: false,
+          dashArray: '4',
+          dashOffset: '0',
         }
       },
       {
