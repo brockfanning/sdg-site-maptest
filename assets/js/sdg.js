@@ -71,9 +71,9 @@
         nameProperty: 'rgn17nm',
         idProperty: 'rgn17cd',
         styleOptions: {
-          weight: 5,
+          weight: 1,
           opacity: 1,
-          color: '#888',
+          color: '#000',
           fill: false,
         },
       },
