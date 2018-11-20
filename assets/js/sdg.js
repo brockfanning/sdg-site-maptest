@@ -32,20 +32,31 @@
         serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
         nameProperty: 'rgn17nm',
         idProperty: 'rgn17cd',
+        styleOptions: {
+          weight: 1,
+          opacity: 1,
+          color: '#888',
+          fill: false,
+        },
+      },
+      {
+        min_zoom: 0,
+        max_zoom: 6,
+        serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
+        nameProperty: 'rgn17nm',
+        idProperty: 'rgn17cd',
         csvDropdownColumn: 'Region',
         styleOptions: {
           weight: 1,
           opacity: 1,
           color: '#888',
-          dashArray: '4',
-          dashOffset: '1',
+          dashArray: '3',
           fillOpacity: 0.7
         },
         styleOptionsSelected: {
-          weight: 5,
+          weight: 2,
           color: '#555',
-          dashArray: '4',
-          dashOffset: '0',
+          dashArray: '3',
         }
       },
       {
