@@ -1,6 +1,22 @@
 /**
  * Notes:
  *
+ * TODO:
+ * Implement TimeDimension
+ * Remove zoom control on mobile (L.Browser.mobile)
+ * Remove legend and instead but a min/max bar at the top of the info pane.
+ * Change info pane to show these two lines:
+ * Name of region    |\/| (close button)
+ * ============123   |/\|
+ * If a child region is selected, and it's parent is not selected, make sure
+ * to select it's parent.
+ * Selections are always positioned child beneath parent
+ * Make sure height is not greater than window height (-50 for ease of scrolling)
+ * If feature is clicked again after selected, then unselect it and do not zoom
+ * Zooming in/out has no affect one selected features
+ * Make zoom on select an option
+ *
+ *
  * Need to simplify and optimize for mobile use. Start there.
  * 1. No integration with filters at all.
  * 2. Simple 2 layers with zoom show/hide.
@@ -71,7 +87,7 @@
       accessToken: 'pk.eyJ1IjoiYnJvY2tmYW5uaW5nMSIsImEiOiJjaXplbmgzczgyMmRtMnZxbzlmbGJmdW9pIn0.LU-BYMX69uu3eGgk0Imibg',
       attribution: 'Blah blah',
       minZoom: 5,
-      maxZoom: 12,
+      maxZoom: 8,
     },
     // Visual/choropleth considerations.
     colorRange: ['#b4c5c1', '#004433'],
