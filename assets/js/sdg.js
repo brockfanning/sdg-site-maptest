@@ -43,7 +43,6 @@
         styleOptionsSelected: {
           weight: 2,
           color: '#555',
-          dashArray: '3',
         }
       },
       {
@@ -63,19 +62,6 @@
           weight: 3,
           color: '#222',
         }
-      },
-      {
-        min_zoom: 0,
-        max_zoom: 20,
-        serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
-        nameProperty: 'rgn17nm',
-        idProperty: 'rgn17cd',
-        styleOptions: {
-          weight: 1,
-          opacity: 1,
-          color: '#000',
-          fill: false,
-        },
       },
     ],
     // Options for using tile imagery with leaflet.
