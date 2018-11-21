@@ -2,8 +2,6 @@
  * Notes:
  *
  * TODO:
- * Remove zoom control on mobile (L.Browser.mobile)
- * Remove legend and instead but a min/max bar at the top of the info pane.
  * Change info pane to show these two lines:
  * Name of region    |\/| (close button)
  * ============123   |/\|
@@ -12,8 +10,7 @@
  * Selections are always positioned child beneath parent
  * Make sure height is not greater than window height (-50 for ease of scrolling)
  * If feature is clicked again after selected, then unselect it and do not zoom
- * Zooming in/out has no affect one selected features
- * Make zoom on select an option
+ * Zooming in/out has no affect on selected features
  */
 (function($, L, chroma, window, document, undefined) {
 
@@ -308,11 +305,18 @@
       // hidden element. So we need to do that when the tab is clicked.
       $('.map .nav-link').click(function() {
         setTimeout(function() {
-          jQuery('#map #loader-container').hide();
+          $('#map #loader-container').hide();
           // Fix the size.
           plugin.map.invalidateSize();
           // Also zoom in/out as needed.
           plugin.zoomToFeature(plugin.getVisibleLayers());
+          // Make sure the info pane is not too wide for the map.
+          var $infoPane = $('.info.leaflet-control');
+          var padding = 20;
+          var maxWidth = $('#map').width() - padding;
+          if ($infoPane.width() > maxWidth) {
+            $infoPane.width(maxWidth);
+          }
         }, 500);
       });
     },
