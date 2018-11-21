@@ -19,6 +19,17 @@
     padding: 0 0 10px 0;
     text-align: right;
     width: 300px; }
+    #main-content #map .info .legend {
+      margin-bottom: 15px; }
+    #main-content #map .info ul {
+      list-style: none; }
+      #main-content #map .info ul li .info-feature {
+        padding: 3px;
+        border-radius: 2px;
+        margin-top: 3px;
+        background: white; }
+        #main-content #map .info ul li .info-feature.no-value {
+          background: repeating-linear-gradient(45deg, #FFF, #FFF 2px, #CCC 2px, #CCC 4px); }
     #main-content #map .info .info-swatch {
       width: 10%;
       display: block;
