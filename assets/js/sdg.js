@@ -2,7 +2,6 @@
  * Notes:
  *
  * TODO:
- * Implement TimeDimension
  * Remove zoom control on mobile (L.Browser.mobile)
  * Remove legend and instead but a min/max bar at the top of the info pane.
  * Change info pane to show these two lines:
@@ -15,27 +14,6 @@
  * If feature is clicked again after selected, then unselect it and do not zoom
  * Zooming in/out has no affect one selected features
  * Make zoom on select an option
- *
- *
- * Need to simplify and optimize for mobile use. Start there.
- * 1. No integration with filters at all.
- * 2. Simple 2 layers with zoom show/hide.
- * 3. Stop there and check performance on mobile.
- *
- * On load:
- *  - load all GeoJSON files and attach them as layers, but only one will be visible
- *  - each layer has its own style options
- * On feature click:
- *  - zoom to clicked feature
- *  - select clicked feature
- *  - update info pane about clicked feature
- * On zoom end:
- *  - show/hide layers as needed
- *  - if hiding a layer with a selected feature, unselect and remove info from pane
- *
- * Takeaways:
- * 1. The default layer will always be visible but not always clickable.
- * 2. For sanity, the lower layers should not receive choropleth colors, only outlines
  */
 (function($, L, chroma, window, document, undefined) {
 
@@ -80,6 +58,8 @@
         }
       },
     ],
+    // Options for the TimeDimension library.
+
     // Options for using tile imagery with leaflet.
     tileURL: 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
     tileOptions: {
@@ -92,13 +72,9 @@
     // Visual/choropleth considerations.
     colorRange: ['#b4c5c1', '#004433'],
     noValueColor: '#f0f0f0',
-    legendItems: 5,
     // Placement of map controls.
-    legendPosition: 'bottomright',
     sliderPosition: 'bottomleft',
     infoPosition: 'topright',
-    // Interaction with disaggregation filters.
-
   };
 
   function Plugin(element, options) {
@@ -114,30 +90,24 @@
     this.valueRange = [_.min(_.pluck(this.options.geoData, 'Value')), _.max(_.pluck(this.options.geoData, 'Value'))];
     this.colorScale = chroma.scale(this.options.colorRange)
       .domain(this.valueRange)
-      .classes(this.options.legendItems);
+      .classes(9);
 
     this.years = _.uniq(_.pluck(this.options.geoData, 'Year'));
     this.currentYear = this.years[0];
 
-    // Track the selected GeoJSON feature.
-    this.selectedFeature = null;
+    // Track the selected GeoJSON features.
+    this.selectedFeatures = [];
 
     // Use the ZoomShowHide library to control visibility ranges.
     this.zoomShowHide = new ZoomShowHide();
 
     // These variables will be set later.
-    this.selectedFields = [];
     this.map = null;
 
     this.init();
   }
 
   Plugin.prototype = {
-
-    // Update the map according according to the currently-selected fields.
-    updateSelectedFields: function() {
-      this.updateColors();
-    },
 
     // Get all of the GeoJSON layers.
     getAllLayers: function() {
@@ -167,14 +137,6 @@
         GeoCode: geocode,
         Year: this.currentYear,
       }
-      /*
-      if (this.viewObj._model.selectedFields.length) {
-        this.viewObj._model.selectedFields.forEach(function(selectedField) {
-          // For now just use the first selection.
-          conditions[selectedField.field] = selectedField.values[0];
-        });
-      }
-      */
       var matches = _.where(this.options.geoData, conditions);
       if (matches.length) {
         return matches[0];
@@ -187,27 +149,8 @@
     // Choose a color for a GeoJSON feature.
     getColor: function(props, idProperty) {
       var thisID = props[idProperty];
-      // First filter out most features if there is a selected parent feature.
-      /*
-      if (this.selectedFeature) {
-        // If there is a selected feature, only display this one if it is
-        // either the selected feature, or a child of it, or is a child of
-        // the same parent.
-        var selectedIDProperty = this.selectedFeature.options.sdgLayer.idProperty;
-        var selectedID = this.selectedFeature.feature.properties[selectedIDProperty];
-        var thisParent = props.parent;
-        var selectedParent = this.selectedFeature.feature.properties.parent;
-        var isSameAsSelected = (thisID == selectedID);
-        var isChildOfSelected = (thisParent == selectedID);
-        var isSiblingOfSelected = (thisParent == selectedParent)
-        if (!isSameAsSelected && !isChildOfSelected && !isSiblingOfSelected) {
-          return this.options.noValueColor;
-        }
-      }
-      */
       // Otherwise return a color based on the data.
       var localData = this.getData(thisID);
-      //console.log(localData);
       return (localData) ? this.colorScale(localData['Value']).hex() : this.options.noValueColor;
     },
 
@@ -223,64 +166,73 @@
       this.map.setView([0, 0], 0);
       this.zoomShowHide.addTo(this.map);
 
+      // Remove zoom control on mobile.
+      if (L.Browser.mobile) {
+        this.map.removeControl(this.map.zoomControl);
+      }
+
       // Add tile imagery.
       L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
 
       // Because after this point, "this" rarely works.
       var plugin = this;
 
+      // Add the time dimension stuff.
+      // Hardcode the timeDimension to year intervals, because this is the SDGs.
+      var timeDimension = new L.TimeDimension({
+        period: 'P1Y',
+        timeInterval: this.years[0] + '-01-02/' + this.years[this.years.length - 1] + '-01-02',
+        currentTime: new Date(this.years[0] + '-01-02').getTime(),
+      });
+      // Save the timeDimension on the map so that it can be used by all layers.
+      this.map.timeDimension = timeDimension;
+      // Create the player. @TODO: Make these options configurable?
+      var player = new L.TimeDimension.Player({
+        transitionTime: 100,
+        loop: false,
+        startOver:true
+      }, timeDimension);
+      // Create the control. @TODO: Make these options configurable?
+      var timeDimensionControlOptions = {
+        player: player,
+        timeDimension: timeDimension,
+        position: this.options.sliderPosition,
+        timeSliderDragUpdate: true,
+        speedSlider: false,
+      };
+      // We have to hijack the control to set the output format.
+      // @TODO: Create PR to make this configurable - this is a common need.
+      L.Control.TimeDimensionCustom = L.Control.TimeDimension.extend({
+        _getDisplayDateFormat: function(date){
+          return date.getFullYear();
+        }
+      });
+      var timeDimensionControl = new L.Control.TimeDimensionCustom(timeDimensionControlOptions);
+      this.map.addControl(timeDimensionControl);
+      // Listen to year changes to update the map colors.
+      timeDimension.on('timeload', function(e) {
+        plugin.currentYear = new Date(e.time).getFullYear();
+        plugin.updateColors();
+      });
+
       // Helper function to round values for the legend.
       function round(value) {
         return Math.round(value * 100) / 100;
       }
 
-      // Add the legend.
-      var legend = L.control();
-      legend.onAdd = function() {
-        var div = L.DomUtil.create('div', 'control legend');
-        var grades = chroma.limits(plugin.valueRange, 'e', plugin.options.legendItems);
-        for (var i = 0; i < grades.length; i++) {
-          div.innerHTML +=
-            '<i style="background:' + plugin.colorScale(grades[i]).hex() + '"></i> ' +
-              round(grades[i]) + (grades[i + 1] ? '&ndash;' + round(grades[i + 1]) + '<br>' : '+');
-        }
-        return div;
-      }
-      legend.setPosition(this.options.legendPosition);
-      legend.addTo(this.map);
-
-      // Add the slider.
-      var slider = L.control();
-      slider.onAdd = function() {
-        var div = L.DomUtil.create('div', 'control');
-        var year = L.DomUtil.create('div', 'current-year', div);
-        year.innerHTML = 'Showing year: <strong>' + plugin.currentYear + '</strong>';
-        var input = L.DomUtil.create('input', 'slider', div);
-        L.DomEvent.disableClickPropagation(input);
-        // Add a bunch of attributes.
-        input.type = 'range';
-        input.min = 0;
-        input.max = plugin.years.length - 1;
-        input.value = 0;
-        input.step = 1;
-        input.oninput = function() {
-          plugin.currentYear = plugin.years[input.value];
-          year.innerHTML = 'Showing year: <strong>' + plugin.currentYear + '</strong>'
-          plugin.updateColors();
-        }
-        return div;
-      }
-      slider.setPosition(this.options.sliderPosition);
-      slider.addTo(this.map);
-
       // Add the info pane.
       var info = L.control();
       info.onAdd = function() {
-        this._div = L.DomUtil.create('div', 'control info');
+        this._div = L.DomUtil.create('div', 'leaflet-control info');
+        var grades = chroma.limits(plugin.valueRange, 'e', 9);
+        for (var i = 0; i < grades.length; i++) {
+          this._div.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
+        }
         this.update();
         return this._div;
       }
       info.update = function(layer) {
+        return;
         if (this._div) {
           this._div.innerHTML = '';
         }
@@ -354,49 +306,6 @@
           plugin.zoomToFeature(layer);
           // Highlight the feature.
           highlightFeature(layer);
-
-          // Select dropdown if necessary.
-          /*
-          if (layer.options.sdgLayer.csvDropdownColumn) {
-            console.log('foo');
-            var csvDropdownColumn = layer.options.sdgLayer.csvDropdownColumn;
-            var geocode = layer.feature.properties[layer.options.sdgLayer.idProperty];
-            var csvData = plugin.getData(geocode);
-            var fields = [
-              {
-                'field': csvDropdownColumn,
-                'values': [],
-              }
-            ]
-
-            // This is messed up -- it is clobbering what is already there.
-
-            // If the CSV data contains it, use it.
-            if (csvData[csvDropdownColumn]) {
-              fields[0].values.push(csvData[csvDropdownColumn]);
-            }
-            // Otherwise try the name.
-            else {
-              fields[0].values.push(layer.feature.properties[layer.options.sdgLayer.nameProperty]);
-            }
-            console.log(fields);
-            // In order to imitate a user click, we have to update the model.
-
-            plugin.viewObj._model.updateSelectedFields(fields);
-
-            // And then we have to manually check the checkbox.
-            var checkboxes = document.querySelectorAll('input[data-field="' + csvDropdownColumn + '"]');
-            checkboxes.forEach(function(checkbox) {
-              if (checkbox.value == fields[0].values[0]) {
-                console.log('checking box');
-                console.log(checkbox);
-                checkbox.checked = true;
-              }
-            });
-
-            plugin.updateColors();
-          }
-          */
         }
       });
 
@@ -416,19 +325,10 @@
 
   // A really lightweight plugin wrapper around the constructor,
   // preventing against multiple instantiations
-  $.fn['sdgMap'] = function(options, alternateOptions) {
+  $.fn['sdgMap'] = function(options) {
     return this.each(function() {
-      if (typeof options === 'string') {
-        if (options == 'update') {
-          if ($.data(this, 'plugin_sdgMap')) {
-            $.data(this, 'plugin_sdgMap').updateSelectedFields(alternateOptions);
-          }
-        }
-      }
-      else {
-        if (!$.data(this, 'plugin_sdgMap')) {
-          $.data(this, 'plugin_sdgMap', new Plugin(this, options));
-        }
+      if (!$.data(this, 'plugin_sdgMap')) {
+        $.data(this, 'plugin_sdgMap', new Plugin(this, options));
       }
     });
   };
@@ -1191,18 +1091,13 @@ var mapView = function () {
 
   "use strict";
 
-  this.initialise = function(geoData, geoCodeRegEx, viewObj) {
+  this.initialise = function(geoData, geoCodeRegEx) {
     $('.map').show();
     $('#map').sdgMap({
       geoData: geoData,
       geoCodeRegEx: geoCodeRegEx,
-      viewObj: viewObj
     });
   };
-
-  this.update = function() {
-    $('#map').sdgMap('update');
-  }
 };
 var indicatorView = function (model, options) {
 
@@ -1268,7 +1163,7 @@ var indicatorView = function (model, options) {
 
     if(args.hasGeoData && args.showMap) {
       view_obj._mapView = new mapView();
-      view_obj._mapView.initialise(args.geoData, args.geoCodeRegEx, view_obj);
+      view_obj._mapView.initialise(args.geoData, args.geoCodeRegEx);
     }
   });
 
@@ -1384,10 +1279,6 @@ var indicatorView = function (model, options) {
         values: _.pluck(value, 'value')
       };
     }).value());
-    // Update the map if necessary.
-    if (view_obj._mapView) {
-      view_obj._mapView.update();
-    }
   }
 
   $(this._rootElement).on('click', '.variable-options button', function(e) {

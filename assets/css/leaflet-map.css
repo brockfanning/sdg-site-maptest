@@ -12,23 +12,15 @@
     justify-content: center; }
     #main-content #map #loader-container img {
       height: auto; }
-  #main-content #map .control {
-    background: white;
-    padding: 5px;
-    box-shadow: black 1px 1px 5px; }
+  #main-content #map .leaflet-control .timecontrol-date {
+    min-width: 80px;
+    padding: 0 10px; }
   #main-content #map .info {
-    padding: 10px;
-    text-align: right; }
-    #main-content #map .info .info-name {
-      margin-bottom: 0; }
-    #main-content #map .info .info-value {
-      font-size: large; }
-  #main-content #map .legend {
-    line-height: 18px;
-    color: #555; }
-  #main-content #map .legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7; }
+    padding: 0 0 10px 0;
+    text-align: right;
+    width: 300px; }
+    #main-content #map .info .info-swatch {
+      width: 10%;
+      display: block;
+      float: left;
+      height: 10px; }
