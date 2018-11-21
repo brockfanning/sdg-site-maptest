@@ -62,7 +62,7 @@ var indicatorView = function (model, options) {
 
     if(args.hasGeoData && args.showMap) {
       view_obj._mapView = new mapView();
-      view_obj._mapView.initialise(args.geoData, args.geoCodeRegEx, view_obj);
+      view_obj._mapView.initialise(args.geoData, args.geoCodeRegEx);
     }
   });
 
@@ -178,10 +178,6 @@ var indicatorView = function (model, options) {
         values: _.pluck(value, 'value')
       };
     }).value());
-    // Update the map if necessary.
-    if (view_obj._mapView) {
-      view_obj._mapView.update();
-    }
   }
 
   $(this._rootElement).on('click', '.variable-options button', function(e) {

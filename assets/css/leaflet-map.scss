@@ -20,32 +20,22 @@
       }
     }
 
-    .control {
-      background: white;
-      padding: 5px;
-      box-shadow: black 1px 1px 5px;
+    .leaflet-control {
+      .timecontrol-date {
+        min-width: 80px;
+        padding: 0 10px;
+      }
     }
     .info {
-      padding: 10px;
+      padding: 0 0 10px 0;
       text-align: right;
-      .info-name {
-        margin-bottom: 0;
+      width: 300px;
+      .info-swatch {
+        width: 10%;
+        display: block;
+        float: left;
+        height: 10px;
       }
-      .info-value {
-        font-size: large;
-      }
-    }
-
-    .legend {
-      line-height: 18px;
-      color: #555;
-    }
-    .legend i {
-      width: 18px;
-      height: 18px;
-      float: left;
-      margin-right: 8px;
-      opacity: 0.7;
     }
   }
 }
