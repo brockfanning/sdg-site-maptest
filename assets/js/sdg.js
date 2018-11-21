@@ -224,18 +224,17 @@
       var info = L.control();
       info.onAdd = function() {
         this._div = L.DomUtil.create('div', 'leaflet-control info');
+        this._legend = L.DomUtil.create('div', '', this._div);
+        this._features = L.DomUtil.create('div', 'feature-list', this._div);
         var grades = chroma.limits(plugin.valueRange, 'e', 9);
         for (var i = 0; i < grades.length; i++) {
-          this._div.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
+          this._legend.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
         }
-        this.update();
         return this._div;
       }
-      info.update = function(layer) {
-        return;
-        if (this._div) {
-          this._div.innerHTML = '';
-        }
+      info.update = function() {
+        this._features.innerHTML = '';
+        // TODO: finish this.
         if (layer) {
           var props = layer.feature.properties;
           var name = L.DomUtil.create('p', 'info-name', this._div);
@@ -281,7 +280,7 @@
         // Highlight a feature.
         function highlightFeature(layer) {
           layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
-          info.update(layer);
+          info.update();
 
           if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
@@ -297,11 +296,7 @@
         // Event handler for click/touch.
         function clickHandler(e) {
           var layer = e.target;
-          // Clicking "selects" a feature.
-          if (plugin.selectedFeature) {
-            unHighlightFeature(plugin.selectedFeature);
-          }
-          plugin.selectedFeature = layer;
+          plugin.selectedFeatures.push(layer);
           // Zoom in.
           plugin.zoomToFeature(layer);
           // Highlight the feature.
