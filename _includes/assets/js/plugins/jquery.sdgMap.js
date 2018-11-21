@@ -210,6 +210,7 @@
       timeDimension.on('timeload', function(e) {
         plugin.currentYear = new Date(e.time).getFullYear();
         plugin.updateColors();
+        plugin.info.update();
       });
 
       // Helper function to round values for the legend.
@@ -221,29 +222,41 @@
       var info = L.control();
       info.onAdd = function() {
         this._div = L.DomUtil.create('div', 'leaflet-control info');
-        this._legend = L.DomUtil.create('div', '', this._div);
-        this._features = L.DomUtil.create('div', 'feature-list', this._div);
-        var grades = chroma.limits(plugin.valueRange, 'e', 9);
+        this._legend = L.DomUtil.create('div', 'legend', this._div);
+        this._features = L.DomUtil.create('ul', 'feature-list', this._div);
+        var grades = chroma.limits(plugin.valueRange, 'e', 9).reverse();
         for (var i = 0; i < grades.length; i++) {
           this._legend.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
         }
         return this._div;
       }
       info.update = function() {
-        this._features.innerHTML = '';
+        var output = '';
         // TODO: finish this.
-        if (layer) {
-          var props = layer.feature.properties;
-          var name = L.DomUtil.create('p', 'info-name', this._div);
-          name.innerHTML = props[layer.options.sdgLayer.nameProperty];
-          var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
-          if (localData['Value']) {
-            name.innerHTML += ': <span class="info-value">' + localData['Value'] + '</span>';
-          }
+        if (plugin.selectedFeatures.length) {
+          plugin.selectedFeatures.forEach(function(layer) {
+            var props = layer.feature.properties;
+            var name = props[layer.options.sdgLayer.nameProperty];
+            var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
+            var classes = 'info-feature';
+            var width = '100';
+            var style = 'display: inline-block; ';
+            if (localData['Value']) {
+              name += ': ' + localData['Value'];
+              width = Math.round((localData['Value'] / plugin.valueRange[1]) * 100);
+              style += 'width: ' + width + '%;';
+            }
+            else {
+              classes += ' no-value';
+            }
+            output += '<li><span class="' + classes + '" style="' + style + '">' + name + '</span></li>';
+          });
         }
+        this._features.innerHTML = output;
       }
       info.setPosition(this.options.infoPosition);
       info.addTo(this.map);
+      this.info = info;
 
       // At this point we need to load the GeoJSON layer/s.
       var geoURLs = this.options.geoLayers.map(function(item) {
