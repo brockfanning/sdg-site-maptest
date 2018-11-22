@@ -27,11 +27,20 @@
       }
     }
     .info {
+      background-color: rgba(150, 150, 150, 0.5);
+      padding: 0;
       .legend {
-        margin-bottom: 15px;
+        height: 12px;
+        .info-swatch {
+          width: 10%;
+          display: block;
+          float: left;
+          height: 10px;
+        }
       }
-      ul {
+      .feature-list {
         list-style: none;
+        margin-bottom: 5px;
         li {
           position: relative;
           margin-top: 3px;
@@ -39,7 +48,7 @@
           .info-bar {
             position: absolute;
             right: 0;
-            border-radius: 2px;
+            border-radius: 2px 0 0 2px;
             background: white;
             z-index: 1;
             height: 23px;
@@ -49,7 +58,7 @@
             right: 0;
             z-index: 2;
             padding: 3px;
-            &.no-value {
+            &.info-no-value {
               background: repeating-linear-gradient(45deg, #FFF, #FFF 2px, #CCC 2px, #CCC 4px);
             }
           }
@@ -62,15 +71,8 @@
           }
         }
       }
-      padding: 0 0 10px 0;
       text-align: right;
       width: 300px;
-      .info-swatch {
-        width: 10%;
-        display: block;
-        float: left;
-        height: 10px;
-      }
     }
   }
 }
