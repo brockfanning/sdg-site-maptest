@@ -236,20 +236,20 @@
         if (plugin.selectedFeatures.length) {
           plugin.selectedFeatures.forEach(function(layer) {
             var props = layer.feature.properties;
-            var name = props[layer.options.sdgLayer.nameProperty];
             var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
-            var classes = 'info-feature';
-            var width = '100';
-            var style = 'display: inline-block; ';
+            var name, value, bar;
             if (localData['Value']) {
-              name += ': ' + localData['Value'];
-              width = Math.round((localData['Value'] / plugin.valueRange[1]) * 100);
-              style += 'width: ' + width + '%;';
+              var width = Math.round((localData['Value'] / plugin.valueRange[1]) * 100) + '%';
+              name = '<span class="info-name">' + props[layer.options.sdgLayer.nameProperty] + '</span>';
+              value = '<span class="info-value" style="right: ' + width + '">' + localData['Value'] + '</span>';
+              bar = '<span class="info-bar" style="display: inline-block; width: ' + width + '"></span>';
             }
             else {
-              classes += ' no-value';
+              name = '<span class="info-name info-no-value">' + props[layer.options.sdgLayer.nameProperty] + '</span>';
+              value = '';
+              bar = '';
             }
-            output += '<li><span class="' + classes + '" style="' + style + '">' + name + '</span></li>';
+            output += '<li>' + bar + value + name + '</span></li>';
           });
         }
         this._features.innerHTML = output;
