@@ -45,6 +45,7 @@
           position: relative;
           margin-top: 3px;
           height: 25px;
+          cursor: pointer;
           .info-bar {
             position: absolute;
             right: 0;
@@ -57,7 +58,7 @@
             position: absolute;
             right: 0;
             z-index: 2;
-            padding: 3px;
+            padding: 3px 20px 3px 3px;
             &.info-no-value {
               background: repeating-linear-gradient(45deg, #FFF, #FFF 2px, #CCC 2px, #CCC 4px);
             }
@@ -69,6 +70,12 @@
             background-color: #ddd;
             padding: 3px;
             border-radius: 2px;
+          }
+          .info-close {
+            top: 6px;
+            right: 5px;
+            position: absolute;
+            z-index: 3;
           }
         }
       }
