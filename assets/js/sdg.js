@@ -110,18 +110,47 @@
 
     // Select a feature.
     selectFeature(layer) {
+      // Update the data structure for selections.
       this.selectedFeatures.push(layer);
+      // Pan to selection.
+      this.map.panTo(layer.getBounds().getCenter());
+      // Update the style.
+      layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
+      // Show a tooltip if necessary.
+      if (this.options.showSelectionLabels) {
+        layer.bindTooltip(layer.feature.properties[layer.options.sdgLayer.nameProperty], {
+          permanent: true,
+        }).addTo(this.map);
+      }
+      // Update the info pane.
+      this.info.update();
+      // Bring layer to front.
+      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+      }
     },
 
     // Unselect a feature.
-    unselectFeature(remove) {
+    unselectFeature(layer) {
+      // Update the data structure for selections.
       var stillSelected = [];
       this.selectedFeatures.forEach(function(existing) {
-        if (remove._leaflet_id != existing._leaflet_id) {
+        if (layer._leaflet_id != existing._leaflet_id) {
           stillSelected.push(existing);
         }
       });
       this.selectedFeatures = stillSelected;
+
+      // Reset the feature's style.
+      layer.setStyle(layer.options.sdgLayer.styleOptions);
+
+      // Remove the tooltip if necessary.
+      if (layer.getTooltip()) {
+        layer.unbindTooltip();
+      }
+
+      // Update the info pane.
+      this.info.update();
     },
 
     // Get all of the GeoJSON layers.
@@ -273,7 +302,6 @@
             item.innerHTML = bar + value + name + '<i class="info-close fa fa-remove"></i>';
             $(item).click(function(e) {
               plugin.unselectFeature(layer);
-              pane.update();
             });
           });
         }
@@ -311,50 +339,14 @@
         }
         plugin.updateColors();
 
-        // Highlight a feature.
-        function highlightFeature(layer) {
-          // Change the color.
-          layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
-
-          // Show a tooltip if necessary.
-          if (plugin.options.showSelectionLabels) {
-            layer.bindTooltip(layer.feature.properties[layer.options.sdgLayer.nameProperty], {
-              permanent: true,
-            }).addTo(plugin.map);
-          }
-
-          info.update();
-
-          if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-            layer.bringToFront();
-          }
-        }
-
-        // Un-highlight a feature.
-        function unHighlightFeature(layer) {
-          layer.setStyle(layer.options.sdgLayer.styleOptions);
-          if (layer.getTooltip()) {
-            layer.unbindTooltip();
-          }
-          info.update();
-        }
-
         // Event handler for click/touch.
         function clickHandler(e) {
           var layer = e.target;
           if (plugin.isFeatureSelected(layer)) {
             plugin.unselectFeature(layer);
-            unHighlightFeature(layer);
           }
           else {
-            // Select the feature.
             plugin.selectFeature(layer);
-            // Pan to selection.
-            plugin.map.panTo(layer.getBounds().getCenter());
-            // Zoom in.
-            //plugin.zoomToFeature(layer);
-            // Highlight the feature.
-            highlightFeature(layer);
           }
         }
       });
