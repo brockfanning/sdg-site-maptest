@@ -3,8 +3,6 @@
  *
  * TODO:
  * Make sure height is not greater than window height (-50 for ease of scrolling)
- * If feature is clicked again after selected, then unselect it and do not zoom
- * Close button for selected features in info pane
  *
  */
 (function($, L, chroma, window, document, undefined) {
@@ -362,10 +360,16 @@
           plugin.zoomToFeature(plugin.getVisibleLayers());
           // Make sure the info pane is not too wide for the map.
           var $infoPane = $('.info.leaflet-control');
-          var padding = 20;
-          var maxWidth = $('#map').width() - padding;
+          var widthPadding = 20;
+          var maxWidth = $('#map').width() - widthPadding;
           if ($infoPane.width() > maxWidth) {
             $infoPane.width(maxWidth);
+          }
+          // Make sure the map is not too high.
+          var heightPadding = 50;
+          var maxHeight = $(window).height() - heightPadding;
+          if ($('#map').height() > maxHeight) {
+            $('#map').height(maxHeight);
           }
         }, 500);
       });
