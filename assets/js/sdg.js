@@ -2,15 +2,10 @@
  * Notes:
  *
  * TODO:
- * Change info pane to show these two lines:
- * Name of region    |\/| (close button)
- * ============123   |/\|
- * If a child region is selected, and it's parent is not selected, make sure
- * to select it's parent.
- * Selections are always positioned child beneath parent
  * Make sure height is not greater than window height (-50 for ease of scrolling)
  * If feature is clicked again after selected, then unselect it and do not zoom
- * Zooming in/out has no affect on selected features
+ * Close button for selected features in info pane
+ *
  */
 (function($, L, chroma, window, document, undefined) {
 
@@ -23,18 +18,15 @@
         serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
         nameProperty: 'rgn17nm',
         idProperty: 'rgn17cd',
-        csvDropdownColumn: 'Region',
         styleOptions: {
           weight: 1,
           opacity: 1,
           color: '#888',
-          dashArray: '3',
           fillOpacity: 0.7
         },
         styleOptionsSelected: {
-          weight: 2,
-          color: '#555',
-        }
+          color: '#111',
+        },
       },
       {
         min_zoom: 7,
@@ -42,17 +34,15 @@
         serviceUrl: '/sdg-site-maptest/public/children.geo.json',
         nameProperty: 'lad16nm',
         idProperty: 'lad16cd',
-        csvDropdownColumn: 'Local authority',
         styleOptions: {
           weight: 1,
           opacity: 1,
-          color: '#AAA',
+          color: '#888',
           fillOpacity: 0.7
         },
         styleOptionsSelected: {
-          weight: 3,
-          color: '#222',
-        }
+          color: '#111',
+        },
       },
     ],
     // Options for the TimeDimension library.
@@ -64,11 +54,12 @@
       accessToken: 'pk.eyJ1IjoiYnJvY2tmYW5uaW5nMSIsImEiOiJjaXplbmgzczgyMmRtMnZxbzlmbGJmdW9pIn0.LU-BYMX69uu3eGgk0Imibg',
       attribution: 'Blah blah',
       minZoom: 5,
-      maxZoom: 8,
+      maxZoom: 10,
     },
     // Visual/choropleth considerations.
     colorRange: ['#b4c5c1', '#004433'],
     noValueColor: '#f0f0f0',
+    showSelectionLabels: true,
     // Placement of map controls.
     sliderPosition: 'bottomleft',
     infoPosition: 'topright',
@@ -106,6 +97,33 @@
 
   Plugin.prototype = {
 
+    // Is this feature selected.
+    isFeatureSelected(check) {
+      var ret = false;
+      this.selectedFeatures.forEach(function(existing) {
+        if (check._leaflet_id == existing._leaflet_id) {
+          ret = true;
+        }
+      });
+      return ret;
+    },
+
+    // Select a feature.
+    selectFeature(layer) {
+      this.selectedFeatures.push(layer);
+    },
+
+    // Unselect a feature.
+    unselectFeature(remove) {
+      var stillSelected = [];
+      this.selectedFeatures.forEach(function(existing) {
+        if (remove._leaflet_id != existing._leaflet_id) {
+          stillSelected.push(existing);
+        }
+      });
+      this.selectedFeatures = stillSelected;
+    },
+
     // Get all of the GeoJSON layers.
     getAllLayers: function() {
       return L.featureGroup(this.zoomShowHide.layers);
@@ -122,7 +140,9 @@
       var plugin = this;
       this.getAllLayers().eachLayer(function(layer) {
         layer.setStyle(function(feature) {
-          return { fillColor: plugin.getColor(feature.properties, layer.sdgOptions.idProperty) }
+          return {
+            fillColor: plugin.getColor(feature.properties, layer.sdgOptions.idProperty),
+          }
         });
       });
     },
@@ -185,7 +205,7 @@
       this.map.timeDimension = timeDimension;
       // Create the player. @TODO: Make these options configurable?
       var player = new L.TimeDimension.Player({
-        transitionTime: 100,
+        transitionTime: 1000,
         loop: false,
         startOver:true
       }, timeDimension);
@@ -231,10 +251,11 @@
         return this._div;
       }
       info.update = function() {
-        var output = '';
-        // TODO: finish this.
+        this._features.innerHTML = '';
+        var pane = this;
         if (plugin.selectedFeatures.length) {
           plugin.selectedFeatures.forEach(function(layer) {
+            var item = L.DomUtil.create('li', '', pane._features);
             var props = layer.feature.properties;
             var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
             var name, value, bar;
@@ -249,10 +270,13 @@
               value = '';
               bar = '';
             }
-            output += '<li>' + bar + value + name + '</span></li>';
+            item.innerHTML = bar + value + name + '<i class="info-close fa fa-remove"></i>';
+            $(item).click(function(e) {
+              plugin.unselectFeature(layer);
+              pane.update();
+            });
           });
         }
-        this._features.innerHTML = output;
       }
       info.setPosition(this.options.infoPosition);
       info.addTo(this.map);
@@ -289,7 +313,16 @@
 
         // Highlight a feature.
         function highlightFeature(layer) {
+          // Change the color.
           layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
+
+          // Show a tooltip if necessary.
+          if (plugin.options.showSelectionLabels) {
+            layer.bindTooltip(layer.feature.properties[layer.options.sdgLayer.nameProperty], {
+              permanent: true,
+            }).addTo(plugin.map);
+          }
+
           info.update();
 
           if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -300,17 +333,29 @@
         // Un-highlight a feature.
         function unHighlightFeature(layer) {
           layer.setStyle(layer.options.sdgLayer.styleOptions);
+          if (layer.getTooltip()) {
+            layer.unbindTooltip();
+          }
           info.update();
         }
 
         // Event handler for click/touch.
         function clickHandler(e) {
           var layer = e.target;
-          plugin.selectedFeatures.push(layer);
-          // Zoom in.
-          plugin.zoomToFeature(layer);
-          // Highlight the feature.
-          highlightFeature(layer);
+          if (plugin.isFeatureSelected(layer)) {
+            plugin.unselectFeature(layer);
+            unHighlightFeature(layer);
+          }
+          else {
+            // Select the feature.
+            plugin.selectFeature(layer);
+            // Pan to selection.
+            plugin.map.panTo(layer.getBounds().getCenter());
+            // Zoom in.
+            //plugin.zoomToFeature(layer);
+            // Highlight the feature.
+            highlightFeature(layer);
+          }
         }
       });
 
