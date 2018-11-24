@@ -1,9 +1,6 @@
 /**
- * Notes:
- *
  * TODO:
- * Make sure height is not greater than window height (-50 for ease of scrolling)
- *
+ * Integrate with high-contrast switcher.
  */
 (function($, L, chroma, window, document, undefined) {
 
