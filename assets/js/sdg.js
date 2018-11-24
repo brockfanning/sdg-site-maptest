@@ -105,7 +105,12 @@
       layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
       // Show a tooltip if necessary.
       if (this.options.showSelectionLabels) {
-        layer.bindTooltip(layer.feature.properties[layer.options.sdgLayer.nameProperty], {
+        var tooltipContent = layer.feature.properties[layer.options.sdgLayer.nameProperty];
+        var tooltipData = this.getData(layer.feature.properties[layer.options.sdgLayer.idProperty]);
+        if (tooltipData) {
+          tooltipContent += ': ' + tooltipData['Value'];
+        }
+        layer.bindTooltip(tooltipContent, {
           permanent: true,
         }).addTo(this.map);
       }
@@ -276,10 +281,11 @@
             var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
             var name, value, bar;
             if (localData['Value']) {
-              var width = Math.round((localData['Value'] / plugin.valueRange[1]) * 100) + '%';
+              var fraction = (localData['Value'] - plugin.valueRange[0]) / (plugin.valueRange[1] - plugin.valueRange[0]);
+              var percentage = Math.round(fraction * 100);
               name = '<span class="info-name">' + props[layer.options.sdgLayer.nameProperty] + '</span>';
-              value = '<span class="info-value" style="right: ' + width + '">' + localData['Value'] + '</span>';
-              bar = '<span class="info-bar" style="display: inline-block; width: ' + width + '"></span>';
+              value = '<span class="info-value" style="right: ' + percentage + '%">' + localData['Value'] + '</span>';
+              bar = '<span class="info-bar" style="display: inline-block; width: ' + percentage + '%"></span>';
             }
             else {
               name = '<span class="info-name info-no-value">' + props[layer.options.sdgLayer.nameProperty] + '</span>';
