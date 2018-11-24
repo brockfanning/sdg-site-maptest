@@ -9,48 +9,13 @@
 
   // Create the defaults once
   var defaults = {
-    geoLayers: [
-      {
-        min_zoom: 0,
-        max_zoom: 6,
-        serviceUrl: '/sdg-site-maptest/public/parents.geo.json',
-        nameProperty: 'rgn17nm',
-        idProperty: 'rgn17cd',
-        styleOptions: {
-          weight: 1,
-          opacity: 1,
-          color: '#888',
-          fillOpacity: 0.7
-        },
-        styleOptionsSelected: {
-          color: '#111',
-        },
-      },
-      {
-        min_zoom: 7,
-        max_zoom: 20,
-        serviceUrl: '/sdg-site-maptest/public/children.geo.json',
-        nameProperty: 'lad16nm',
-        idProperty: 'lad16cd',
-        styleOptions: {
-          weight: 1,
-          opacity: 1,
-          color: '#888',
-          fillOpacity: 0.7
-        },
-        styleOptionsSelected: {
-          color: '#111',
-        },
-      },
-    ],
-    // Options for the TimeDimension library.
 
     // Options for using tile imagery with leaflet.
     tileURL: 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
     tileOptions: {
       id: 'mapbox.light',
-      accessToken: 'pk.eyJ1IjoiYnJvY2tmYW5uaW5nMSIsImEiOiJjaXplbmgzczgyMmRtMnZxbzlmbGJmdW9pIn0.LU-BYMX69uu3eGgk0Imibg',
-      attribution: 'Blah blah',
+      accessToken: '[replace me]',
+      attribution: '[replace me]',
       minZoom: 5,
       maxZoom: 10,
     },
@@ -63,12 +28,38 @@
     infoPosition: 'topright',
   };
 
+  // Defaults for each geoLayer.
+  var geoLayerDefaults = {
+    min_zoom: 0,
+    max_zoom: 20,
+    styleOptions: {
+      weight: 1,
+      opacity: 1,
+      color: '#888',
+      fillOpacity: 0.7
+    },
+    styleOptionsSelected: {
+      color: '#111',
+    },
+  }
+
   function Plugin(element, options) {
 
     this.viewObj = options.viewObj;
 
     this.element = element;
-    this.options = $.extend({}, defaults, options);
+    this.options = $.extend(true, {}, defaults, options);
+
+    // Require at least one geoLayer.
+    if (!this.options.geoLayers.length) {
+      console.log('Map disabled, no geoLayers in options.');
+      return;
+    }
+
+    // Apply geoLayer defaults.
+    for (var i = 0; i < this.options.geoLayers.length; i++) {
+      this.options.geoLayers[i] = $.extend(true, {}, geoLayerDefaults, this.options.geoLayers[i]);
+    }
 
     this._defaults = defaults;
     this._name = 'sdgMap';
@@ -89,6 +80,7 @@
 
     // These variables will be set later.
     this.map = null;
+
 
     this.init();
   }
