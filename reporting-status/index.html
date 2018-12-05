@@ -41,21 +41,21 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.3/css/fixedColumns.dataTables.min.css">
-        <link rel="stylesheet" href="/sdg-site-maptest/assets/css/default.css?v=20181205000139">
+        <link rel="stylesheet" href="/sdg-site-maptest/assets/css/default.css?v=20181205021231">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
-        <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css" /><link rel="stylesheet" href="/sdg-site-maptest/assets/css/leaflet-map.css?v=20181205000139"></head>
+        <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css" /><link rel="stylesheet" href="/sdg-site-maptest/assets/css/leaflet-map.css?v=20181205021231"></head>
 <body>
 <!-- <div class="container"> -->
 
-<a class="sr-only sr-only-focusable" id="skiplink" href="#main-content" tabindex="0"></a>
+<a class="sr-only sr-only-focusable" id="skiplink" href="#main-content" tabindex="0">Skip to main content</a>
 <div id="disclaimer">
   <div class="container">
   <div class="alert alert-danger" role="alert">
-    <strong class="phase-tag"></strong>
-    
+    <strong class="phase-tag">Alpha</strong>
+    This is a development website. We welcome your <a href="mailto:sustainabledevelopment@ons.gov.uk">feedback</a>.
   </div>
 </div>
 
@@ -65,7 +65,7 @@
   <div class="container">
 
     <a class="navbar-brand" href="/sdg-site-maptest/" id="home">
-      <img src="/sdg-site-maptest/assets/img/SDG_logo.png" alt=" - " />
+      <img src="/sdg-site-maptest/assets/img/SDG_logo.png" alt="Sustainable Development Goals - 17 Goals to Transform our World" />
     </a>
 
   <div class='hidden visible-xs float-right'>
@@ -74,34 +74,34 @@
     <nav class="navbar navbar-default" id="main-nav">
 
       <ul class="top-level">
-        <li><span data-target="menu"></span></li>
-        <li><span data-target="search"></span></li>
+        <li><span data-target="menu">Menu</span></li>
+        <li><span data-target="search">Search</span></li>
       </ul>
 
       <ul class="nav navbar-nav menu-target contrast-switcher" id="menu"><li class="nav-link"
           >
-          <a href="/sdg-site-maptest/"></a>
+          <a href="/sdg-site-maptest/">Goals</a>
         </li>
         <li class="nav-link active" >
-          <a href="/sdg-site-maptest/reporting-status"></a>
+          <a href="/sdg-site-maptest/reporting-status">Reporting Status</a>
         </li>
         <li class="nav-link" >
-          <a href="/sdg-site-maptest/about"></a>
+          <a href="/sdg-site-maptest/about">About</a>
         <li class="nav-link" >
-            <a href="/sdg-site-maptest/publications"></a>
+            <a href="/sdg-site-maptest/publications">Publications</a>
         </li>
         <li class="nav-link" >
-          <a href="/sdg-site-maptest/guidance"></a>
+          <a href="/sdg-site-maptest/guidance">Guidance</a>
         </li>
         <li class="nav-link" >
-          <a href="/sdg-site-maptest/faq"></a>
+          <a href="/sdg-site-maptest/faq">FAQ</a>
         </li></ul>
 
       <div id="search" class="menu-target">
   <label for="indicator_search">
-    <i class="fa fa-search" aria-hidden="true"></i><span>:</span>
+    <i class="fa fa-search" aria-hidden="true"></i><span>Search:</span>
   </label>
-  <input id="indicator_search" title="" placeholder="" data-url="/sdg-site-maptest/indicators.json" data-pageurl="/sdg-site-maptest/search/?" />
+  <input id="indicator_search" title="Indicator search" placeholder="Indicator search" data-url="/sdg-site-maptest/indicators.json" data-pageurl="/sdg-site-maptest/search/?" />
 </div>
 
 
@@ -112,7 +112,7 @@
 
 <div id="main-content" class="container reportingstatus" data-url="/sdg-site-maptest/indicators.json">
 
-  <h1></h1>
+  <h1>Reporting Status</h1>
 
   
   
@@ -123,18 +123,18 @@
   <div class="goal goal-overall" data-goalid="">
       <div class="details">
         <h2 class="status-goal">
-           <span class="total"><span>244</span> </span>
+          Overall Reporting Status <span class="total"><span>244</span> indicators</span>
         </h2>
         <div class="summary">
           <div class="statuses">
             <div>
-              <span class="status success">156</span><strong></strong><span class="value"></span>
+              <span class="status success">156</span><strong>Reported online</strong><span class="value"></span>
             </div>
             <div>
-              <span class="status warning">22</span><strong></strong><span class="value"></span>
+              <span class="status warning">22</span><strong>Statistics in progress</strong><span class="value"></span>
             </div>
             <div>
-              <span class="status danger">66</span><strong></strong><span class="value"></span>
+              <span class="status danger">66</span><strong>Exploring data sources</strong><span class="value"></span>
             </div>
             <br style="clear:both;" />
           </div>
@@ -159,25 +159,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="1">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/1.png" alt=" -  1" width="100" height="100" />
+            <a href="/sdg-site-maptest/no-poverty/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/1.png" alt="No Poverty - Goal 1" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">14<span></span> </span>
+              <a href="/sdg-site-maptest/no-poverty/">No Poverty</a>
+              <span class="total">14<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">7</span><strong></strong><span class="value"></span>
+                  <span class="status success">7</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">6</span><strong></strong><span class="value"></span>
+                  <span class="status danger">6</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -203,25 +203,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="2">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/2.png" alt=" -  2" width="100" height="100" />
+            <a href="/sdg-site-maptest/zero-hunger/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/2.png" alt="Zero Hunger - Goal 2" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">13<span></span> </span>
+              <a href="/sdg-site-maptest/zero-hunger/">Zero Hunger</a>
+              <span class="total">13<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">9</span><strong></strong><span class="value"></span>
+                  <span class="status success">9</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">2</span><strong></strong><span class="value"></span>
+                  <span class="status warning">2</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">2</span><strong></strong><span class="value"></span>
+                  <span class="status danger">2</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -247,25 +247,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="3">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/3.png" alt=" -  3" width="100" height="100" />
+            <a href="/sdg-site-maptest/good-health-and-well-being/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/3.png" alt="Good Health and Well-being - Goal 3" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">27<span></span> </span>
+              <a href="/sdg-site-maptest/good-health-and-well-being/">Good Health and Well-being</a>
+              <span class="total">27<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">20</span><strong></strong><span class="value"></span>
+                  <span class="status success">20</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">3</span><strong></strong><span class="value"></span>
+                  <span class="status warning">3</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">4</span><strong></strong><span class="value"></span>
+                  <span class="status danger">4</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -291,25 +291,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="4">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/4.png" alt=" -  4" width="100" height="100" />
+            <a href="/sdg-site-maptest/quality-education/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/4.png" alt="Quality Education - Goal 4" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">11<span></span> </span>
+              <a href="/sdg-site-maptest/quality-education/">Quality Education</a>
+              <span class="total">11<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">10</span><strong></strong><span class="value"></span>
+                  <span class="status success">10</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">0</span><strong></strong><span class="value"></span>
+                  <span class="status danger">0</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -335,25 +335,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="5">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/5.png" alt=" -  5" width="100" height="100" />
+            <a href="/sdg-site-maptest/gender-equality/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/5.png" alt="Gender Equality - Goal 5" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">14<span></span> </span>
+              <a href="/sdg-site-maptest/gender-equality/">Gender Equality</a>
+              <span class="total">14<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">13</span><strong></strong><span class="value"></span>
+                  <span class="status success">13</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">0</span><strong></strong><span class="value"></span>
+                  <span class="status danger">0</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -379,25 +379,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="6">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/6.png" alt=" -  6" width="100" height="100" />
+            <a href="/sdg-site-maptest/clean-water-and-sanitation/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/6.png" alt="Clean water and sanitation - Goal 6" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">11<span></span> </span>
+              <a href="/sdg-site-maptest/clean-water-and-sanitation/">Clean water and sanitation</a>
+              <span class="total">11<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">4</span><strong></strong><span class="value"></span>
+                  <span class="status success">4</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">2</span><strong></strong><span class="value"></span>
+                  <span class="status warning">2</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">5</span><strong></strong><span class="value"></span>
+                  <span class="status danger">5</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -423,25 +423,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="7">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/7.png" alt=" -  7" width="100" height="100" />
+            <a href="/sdg-site-maptest/affordable-and-clean-energy/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/7.png" alt="Affordable and clean energy - Goal 7" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">6<span></span> </span>
+              <a href="/sdg-site-maptest/affordable-and-clean-energy/">Affordable and clean energy</a>
+              <span class="total">6<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">6</span><strong></strong><span class="value"></span>
+                  <span class="status success">6</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">0</span><strong></strong><span class="value"></span>
+                  <span class="status warning">0</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">0</span><strong></strong><span class="value"></span>
+                  <span class="status danger">0</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -467,25 +467,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="8">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/8.png" alt=" -  8" width="100" height="100" />
+            <a href="/sdg-site-maptest/decent-jobs-and-economic-growth/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/8.png" alt="Decent jobs and economic growth - Goal 8" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">17<span></span> </span>
+              <a href="/sdg-site-maptest/decent-jobs-and-economic-growth/">Decent jobs and economic growth</a>
+              <span class="total">17<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">15</span><strong></strong><span class="value"></span>
+                  <span class="status success">15</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">0</span><strong></strong><span class="value"></span>
+                  <span class="status warning">0</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">2</span><strong></strong><span class="value"></span>
+                  <span class="status danger">2</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -511,25 +511,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="9">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/9.png" alt=" -  9" width="100" height="100" />
+            <a href="/sdg-site-maptest/industry-innovation-and-infrastructure/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/9.png" alt="Industry, innovation and infrastructure - Goal 9" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">12<span></span> </span>
+              <a href="/sdg-site-maptest/industry-innovation-and-infrastructure/">Industry, innovation and infrastructure</a>
+              <span class="total">12<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">10</span><strong></strong><span class="value"></span>
+                  <span class="status success">10</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">0</span><strong></strong><span class="value"></span>
+                  <span class="status warning">0</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">2</span><strong></strong><span class="value"></span>
+                  <span class="status danger">2</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -555,25 +555,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="10">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/10.png" alt=" -  10" width="100" height="100" />
+            <a href="/sdg-site-maptest/reduced-inequalities/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/10.png" alt="Reduced inequalities - Goal 10" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">11<span></span> </span>
+              <a href="/sdg-site-maptest/reduced-inequalities/">Reduced inequalities</a>
+              <span class="total">11<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">7</span><strong></strong><span class="value"></span>
+                  <span class="status success">7</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">3</span><strong></strong><span class="value"></span>
+                  <span class="status danger">3</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -599,25 +599,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="11">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/11.png" alt=" -  11" width="100" height="100" />
+            <a href="/sdg-site-maptest/sustainable-cities-communities/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/11.png" alt="Sustainable Cities & Communities - Goal 11" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">15<span></span> </span>
+              <a href="/sdg-site-maptest/sustainable-cities-communities/">Sustainable Cities & Communities</a>
+              <span class="total">15<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">9</span><strong></strong><span class="value"></span>
+                  <span class="status success">9</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">0</span><strong></strong><span class="value"></span>
+                  <span class="status warning">0</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">6</span><strong></strong><span class="value"></span>
+                  <span class="status danger">6</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -643,25 +643,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="12">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/12.png" alt=" -  12" width="100" height="100" />
+            <a href="/sdg-site-maptest/responsible-consumption-and-production/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/12.png" alt="Responsible consumption and production - Goal 12" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">13<span></span> </span>
+              <a href="/sdg-site-maptest/responsible-consumption-and-production/">Responsible consumption and production</a>
+              <span class="total">13<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">6</span><strong></strong><span class="value"></span>
+                  <span class="status success">6</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">6</span><strong></strong><span class="value"></span>
+                  <span class="status danger">6</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -687,25 +687,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="13">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/13.png" alt=" -  13" width="100" height="100" />
+            <a href="/sdg-site-maptest/climate-action/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/13.png" alt="Climate action - Goal 13" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">8<span></span> </span>
+              <a href="/sdg-site-maptest/climate-action/">Climate action</a>
+              <span class="total">8<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">7</span><strong></strong><span class="value"></span>
+                  <span class="status success">7</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">0</span><strong></strong><span class="value"></span>
+                  <span class="status warning">0</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">1</span><strong></strong><span class="value"></span>
+                  <span class="status danger">1</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -731,25 +731,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="14">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/14.png" alt=" -  14" width="100" height="100" />
+            <a href="/sdg-site-maptest/life-below-water/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/14.png" alt="Life below water - Goal 14" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">10<span></span> </span>
+              <a href="/sdg-site-maptest/life-below-water/">Life below water</a>
+              <span class="total">10<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">3</span><strong></strong><span class="value"></span>
+                  <span class="status success">3</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">3</span><strong></strong><span class="value"></span>
+                  <span class="status warning">3</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">4</span><strong></strong><span class="value"></span>
+                  <span class="status danger">4</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -775,25 +775,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="15">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/15.png" alt=" -  15" width="100" height="100" />
+            <a href="/sdg-site-maptest/life-on-land/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/15.png" alt="Life on land - Goal 15" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">14<span></span> </span>
+              <a href="/sdg-site-maptest/life-on-land/">Life on land</a>
+              <span class="total">14<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">10</span><strong></strong><span class="value"></span>
+                  <span class="status success">10</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">3</span><strong></strong><span class="value"></span>
+                  <span class="status danger">3</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -819,25 +819,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="16">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/16.png" alt=" -  16" width="100" height="100" />
+            <a href="/sdg-site-maptest/peace-and-justice-strong-institutions/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/16.png" alt="Peace and justice - strong institutions - Goal 16" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">23<span></span> </span>
+              <a href="/sdg-site-maptest/peace-and-justice-strong-institutions/">Peace and justice - strong institutions</a>
+              <span class="total">23<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">12</span><strong></strong><span class="value"></span>
+                  <span class="status success">12</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">1</span><strong></strong><span class="value"></span>
+                  <span class="status warning">1</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">10</span><strong></strong><span class="value"></span>
+                  <span class="status danger">10</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -863,25 +863,25 @@
         <!--<li>-->
         <div class="goal" data-goalid="17">
           <div class="frame">
-            <a href="/sdg-site-maptest//">
-              <img src="/sdg-site-maptest/assets/img/goals/en/17.png" alt=" -  17" width="100" height="100" />
+            <a href="/sdg-site-maptest/partnerships-for-the-goals/">
+              <img src="/sdg-site-maptest/assets/img/goals/en/17.png" alt="Partnerships for the goals - Goal 17" width="100" height="100" />
             </a>
           </div>
           <div class="details">
             <h3 class="status-goal">
-              <a href="/sdg-site-maptest//"></a>
-              <span class="total">25<span></span> </span>
+              <a href="/sdg-site-maptest/partnerships-for-the-goals/">Partnerships for the goals</a>
+              <span class="total">25<span></span> indicators</span>
             </h3>
             <div class="summary">
               <div class="statuses">
                 <div>
-                  <span class="status success">8</span><strong></strong><span class="value"></span>
+                  <span class="status success">8</span><strong>Reported online</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status warning">5</span><strong></strong><span class="value"></span>
+                  <span class="status warning">5</span><strong>Statistics in progress</strong><span class="value"></span>
                 </div>
                 <div>
-                  <span class="status danger">12</span><strong></strong><span class="value"></span>
+                  <span class="status danger">12</span><strong>Exploring data sources</strong><span class="value"></span>
                 </div>
                 <br style="clear:both;" />
               </div>
@@ -910,10 +910,10 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-9">
-        <a href="mailto:sustainabledevelopment@ons.gov.uk"></a> | <a class="twitter-follow-button" href="https://twitter.com/StatsClaudie?ref_src=twsrc%5Etfw" data-show-count="false">@StatsClaudie</a>
+        <a href="mailto:sustainabledevelopment@ons.gov.uk">Contact us</a> | <a class="twitter-follow-button" href="https://twitter.com/StatsClaudie?ref_src=twsrc%5Etfw" data-show-count="false">@StatsClaudie</a>
       </div>
       <div class="col-xs-3 text-right">
-        <a href="/sdg-site-maptest/faq/"></a> | <a href="/sdg-site-maptest/about/cookies-and-privacy/"></a>
+        <a href="/sdg-site-maptest/faq/">FAQ</a> | <a href="/sdg-site-maptest/about/cookies-and-privacy/">Cookies</a>
       </div>
     </div>
   </div>
@@ -952,7 +952,7 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 <script>
   var remoteDataBaseUrl = 'http://brock.tips/sdg-data-maptest';
 </script>
-<script src='/sdg-site-maptest/assets/js/sdg.js?v=20181205000139'></script>
+<script src='/sdg-site-maptest/assets/js/sdg.js?v=20181205021231'></script>
 <script>
 $(function() {
     if($('#indicatorData').length) {

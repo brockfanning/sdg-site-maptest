@@ -109,7 +109,8 @@ header {
   top: 0;
   right: 0;
   left: 0;
-  z-index: 400; }
+  z-index: 400;
+  max-height: 40px; }
   #disclaimer .phase-tag {
     background: #005ea5;
     color: white;
