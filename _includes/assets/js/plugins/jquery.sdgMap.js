@@ -353,6 +353,8 @@
           plugin.map.invalidateSize();
           // Also zoom in/out as needed.
           plugin.zoomToFeature(plugin.getVisibleLayers());
+          // Limit the panning to what we care about.
+          plugin.map.setMaxBounds(plugin.getVisibleLayers().getBounds());
           // Make sure the info pane is not too wide for the map.
           var $infoPane = $('.info.leaflet-control');
           var widthPadding = 20;
