@@ -29,7 +29,8 @@
         height: 10px; }
     #main-content #map .info .feature-list {
       list-style: none;
-      margin-bottom: 5px; }
+      margin-bottom: 5px;
+      padding-left: 0; }
       #main-content #map .info .feature-list li {
         position: relative;
         margin-top: 3px;
