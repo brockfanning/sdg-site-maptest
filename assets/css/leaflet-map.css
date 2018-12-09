@@ -21,7 +21,7 @@
     text-align: right;
     width: 300px; }
     #main-content #map .info .legend {
-      height: 12px; }
+      height: 10px; }
       #main-content #map .info .legend .info-swatch {
         width: 10%;
         display: block;
@@ -29,29 +29,30 @@
         height: 10px; }
     #main-content #map .info .feature-list {
       list-style: none;
-      margin-bottom: 5px;
+      margin-bottom: 0;
       padding-left: 0; }
       #main-content #map .info .feature-list li {
         position: relative;
         margin-top: 3px;
-        height: 25px;
-        cursor: pointer; }
+        cursor: pointer;
+        height: 23px; }
+        #main-content #map .info .feature-list li:first-child {
+          margin-top: 0; }
+        #main-content #map .info .feature-list li .info-bar, #main-content #map .info .feature-list li .info-name, #main-content #map .info .feature-list li .info-value {
+          height: 23px;
+          position: absolute; }
         #main-content #map .info .feature-list li .info-bar {
-          position: absolute;
           right: 0;
           border-radius: 2px 0 0 2px;
           background: white;
-          z-index: 1;
-          height: 23px; }
+          z-index: 1; }
         #main-content #map .info .feature-list li .info-name {
-          position: absolute;
           right: 0;
           z-index: 2;
           padding: 3px 20px 3px 3px; }
           #main-content #map .info .feature-list li .info-name.info-no-value {
             background: repeating-linear-gradient(45deg, #FFF, #FFF 2px, #CCC 2px, #CCC 4px); }
         #main-content #map .info .feature-list li .info-value {
-          position: absolute;
           z-index: 2;
           margin-right: 5px;
           background-color: #ddd;
