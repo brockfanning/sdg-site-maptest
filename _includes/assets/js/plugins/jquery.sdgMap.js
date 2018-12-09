@@ -296,6 +296,15 @@
             $(item).click(function(e) {
               plugin.unselectFeature(layer);
             });
+            // Make sure that the value is not overlapping with the name.
+            var nameWidth = $(item).find('.info-name').width();
+            var barWidth = $(item).find('.info-bar').width();
+            if (barWidth < nameWidth) {
+              // If the bar is shorter than the name, bump out the value.
+              // Adding 25 makes it come out right.
+              var valueMargin = (nameWidth - barWidth) + 25;
+              $(item).find('.info-value').css('margin-right', valueMargin + 'px');
+            }
           });
         }
       }
