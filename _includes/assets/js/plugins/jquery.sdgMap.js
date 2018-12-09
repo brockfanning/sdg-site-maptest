@@ -263,8 +263,8 @@
       var info = L.control();
       info.onAdd = function() {
         this._div = L.DomUtil.create('div', 'leaflet-control info');
-        this._legend = L.DomUtil.create('div', 'legend', this._div);
         this._features = L.DomUtil.create('ul', 'feature-list', this._div);
+        this._legend = L.DomUtil.create('div', 'legend', this._div);
         var grades = chroma.limits(plugin.valueRange, 'e', 9).reverse();
         for (var i = 0; i < grades.length; i++) {
           this._legend.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';

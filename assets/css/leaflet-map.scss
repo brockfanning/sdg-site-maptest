@@ -30,7 +30,7 @@
       background-color: rgba(150, 150, 150, 0.6);
       padding: 0;
       .legend {
-        height: 12px;
+        height: 10px;
         .info-swatch {
           width: 10%;
           display: block;
@@ -40,23 +40,27 @@
       }
       .feature-list {
         list-style: none;
-        margin-bottom: 5px;
+        margin-bottom: 0;
         padding-left: 0;
         li {
           position: relative;
           margin-top: 3px;
-          height: 25px;
+          &:first-child {
+            margin-top: 0;
+          }
           cursor: pointer;
-          .info-bar {
+          height: 23px;
+          .info-bar, .info-name, .info-value {
+            height: 23px;
             position: absolute;
+          }
+          .info-bar {
             right: 0;
             border-radius: 2px 0 0 2px;
             background: white;
             z-index: 1;
-            height: 23px;
           }
           .info-name {
-            position: absolute;
             right: 0;
             z-index: 2;
             padding: 3px 20px 3px 3px;
@@ -65,7 +69,6 @@
             }
           }
           .info-value {
-            position: absolute;
             z-index: 2;
             margin-right: 5px;
             background-color: #ddd;
