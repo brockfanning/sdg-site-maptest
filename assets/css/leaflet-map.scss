@@ -38,6 +38,43 @@
           height: 10px;
         }
       }
+      .legend-values {
+        position: absolute;
+        bottom: -10px;
+        width: 100%;
+        .arrow {
+          width: 0;
+          height: 0;
+          border-style: solid;
+          position: absolute;
+          top: -10px;
+          z-index: 1;
+          &.left {
+            border-width: 20px 0 0 20px;
+            border-color: transparent transparent transparent white;
+            left: 0;
+          }
+          &.right {
+            border-width: 0 0 20px 20px;
+            border-color: transparent transparent white transparent;
+            right: 1px;
+            box-shadow: 1px 1px 1px 0px #666;
+          }
+        }
+        .legend-value {
+          padding: 0 4px;
+          background: white;
+          position: absolute;
+          z-index: 2;
+          &.left {
+            left: 0;
+          }
+          &.right {
+            right: 1px;
+          }
+          box-shadow: 1px 1px 1px 0px #666;
+        }
+      }
       .feature-list {
         list-style: none;
         margin-bottom: 0;
