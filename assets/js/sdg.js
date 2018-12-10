@@ -13,9 +13,10 @@
       id: 'mapbox.light',
       accessToken: '[replace me]',
       attribution: '[replace me]',
-      minZoom: 5,
-      maxZoom: 10,
     },
+    // Zoom limits.
+    minZoom: 5,
+    maxZoom: 10,
     // Visual/choropleth considerations.
     colorRange: ['#b4c5c1', '#004433'],
     noValueColor: '#f0f0f0',
@@ -200,7 +201,10 @@
     init: function() {
 
       // Create the map.
-      this.map = L.map(this.element);
+      this.map = L.map(this.element, {
+        minZoom: this.options.minZoom,
+        maxZoom: this.options.maxZoom,
+      });
       this.map.setView([0, 0], 0);
       this.zoomShowHide.addTo(this.map);
 
@@ -210,7 +214,7 @@
       }
 
       // Add tile imagery.
-      L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
+      //L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
 
       // Because after this point, "this" rarely works.
       var plugin = this;
@@ -1178,8 +1182,8 @@ var mapView = function () {
       tileOptions: {
         accessToken: 'pk.eyJ1IjoiYnJvY2tmYW5uaW5nMSIsImEiOiJjaXplbmgzczgyMmRtMnZxbzlmbGJmdW9pIn0.LU-BYMX69uu3eGgk0Imibg',
         attribution: '<a href="https://www.mapbox.com">Mapbox</a> | <a href="http://geoportal.statistics.gov.uk/">ONS</a>',
-        minZoom: 6,
       },
+      minZoom: 6,
     });
   };
 };
