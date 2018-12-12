@@ -18,9 +18,10 @@
     minZoom: 5,
     maxZoom: 10,
     // Visual/choropleth considerations.
-    colorRange: ['#b4c5c1', '#004433'],
+    colorRange: ['#e5f5f9', '#2ca25f'],
     noValueColor: '#f0f0f0',
     showSelectionLabels: true,
+    colorClasses: 5,
     // Placement of map controls.
     sliderPosition: 'bottomleft',
     infoPosition: 'topright',
@@ -65,7 +66,7 @@
     this.valueRange = [_.min(_.pluck(this.options.geoData, 'Value')), _.max(_.pluck(this.options.geoData, 'Value'))];
     this.colorScale = chroma.scale(this.options.colorRange)
       .domain(this.valueRange)
-      .classes(9);
+      .classes(this.options.colorClasses);
 
     this.years = _.uniq(_.pluck(this.options.geoData, 'Year'));
     this.currentYear = this.years[0];
@@ -84,6 +85,19 @@
   }
 
   Plugin.prototype = {
+
+    // Add time series to GeoJSON data.
+    addTimeSeries(geoJson, idProperty) {
+      geoJson.features.forEach(function(feature) {
+        var geocode = feature.properties[idProperty];
+        var records = _.where(this.options.geoData, { GeoCode: geocode });
+        records.forEach(function(record) {
+          // Add the Year data into the properties.
+          feature.properties[record.Year] = record.Value;
+        });
+      });
+      return geoJson;
+    },
 
     // Is this feature selected.
     isFeatureSelected(check) {
@@ -204,62 +218,34 @@
       this.map = L.map(this.element, {
         minZoom: this.options.minZoom,
         maxZoom: this.options.maxZoom,
+        zoomControl: false,
       });
       this.map.setView([0, 0], 0);
       this.zoomShowHide.addTo(this.map);
 
-      // Remove zoom control on mobile.
-      if (L.Browser.mobile) {
-        this.map.removeControl(this.map.zoomControl);
-      }
+      // Add zoom control.
+      this.zoomHome = L.Control.zoomHome();
+      this.map.addControl(this.zoomHome);
 
       // Add full-screen functionality.
       this.map.addControl(new L.Control.Fullscreen());
 
       // Add tile imagery.
-      //L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
+      L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
 
       // Because after this point, "this" rarely works.
       var plugin = this;
 
-      // Add the time dimension stuff.
-      // Hardcode the timeDimension to year intervals, because this is the SDGs.
-      var timeDimension = new L.TimeDimension({
-        period: 'P1Y',
-        timeInterval: this.years[0] + '-01-02/' + this.years[this.years.length - 1] + '-01-02',
-        currentTime: new Date(this.years[0] + '-01-02').getTime(),
-      });
-      // Save the timeDimension on the map so that it can be used by all layers.
-      this.map.timeDimension = timeDimension;
-      // Create the player. @TODO: Make these options configurable?
-      var player = new L.TimeDimension.Player({
-        transitionTime: 1000,
-        loop: false,
-        startOver:true
-      }, timeDimension);
-      // Create the control. @TODO: Make these options configurable?
-      var timeDimensionControlOptions = {
-        player: player,
-        timeDimension: timeDimension,
-        position: this.options.sliderPosition,
-        timeSliderDragUpdate: true,
-        speedSlider: false,
-      };
-      // We have to hijack the control to set the output format.
-      // @TODO: Create PR to make this configurable - this is a common need.
-      L.Control.TimeDimensionCustom = L.Control.TimeDimension.extend({
-        _getDisplayDateFormat: function(date){
-          return date.getFullYear();
+      // Add the year slider.
+      this.map.addControl(L.Control.yearSlider({
+        yearStart: this.years[0],
+        yearEnd: this.years[this.years.length - 1],
+        yearChangeCallback: function(e) {
+          plugin.currentYear = new Date(e.time).getFullYear();
+          plugin.updateColors();
+          plugin.info.update();
         }
-      });
-      var timeDimensionControl = new L.Control.TimeDimensionCustom(timeDimensionControlOptions);
-      this.map.addControl(timeDimensionControl);
-      // Listen to year changes to update the map colors.
-      timeDimension.on('timeload', function(e) {
-        plugin.currentYear = new Date(e.time).getFullYear();
-        plugin.updateColors();
-        plugin.info.update();
-      });
+      }));
 
       // Helper function to round values for the legend.
       function round(value) {
@@ -273,9 +259,9 @@
         this._features = L.DomUtil.create('ul', 'feature-list', this._div);
         this._legend = L.DomUtil.create('div', 'legend', this._div);
         this._legendValues = L.DomUtil.create('div', 'legend-values', this._div);
-        var grades = chroma.limits(plugin.valueRange, 'e', 9).reverse();
+        var grades = chroma.limits(plugin.valueRange, 'e', plugin.options.colorClasses - 1).reverse();
         for (var i = 0; i < grades.length; i++) {
-          this._legend.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
+          this._legend.innerHTML += '<span class="info-swatch" style="width:' + (100 / plugin.options.colorClasses) + '%; background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
         }
         this._legendValues.innerHTML += '<span class="legend-value left">' + plugin.valueRange[1] + '</span><span class="arrow left"></span>';
         this._legendValues.innerHTML += '<span class="legend-value right">' + plugin.valueRange[0] + '</span><span class="arrow right"></span>';
@@ -375,6 +361,8 @@
           plugin.zoomToFeature(plugin.getVisibleLayers());
           // Limit the panning to what we care about.
           plugin.map.setMaxBounds(plugin.getVisibleLayers().getBounds());
+          // Set the zoom home.
+          plugin.zoomHome.setHomeBounds();
           // Make sure the info pane is not too wide for the map.
           var $infoPane = $('.info.leaflet-control');
           var widthPadding = 20;
