@@ -18,9 +18,10 @@
     minZoom: 5,
     maxZoom: 10,
     // Visual/choropleth considerations.
-    colorRange: ['#b4c5c1', '#004433'],
+    colorRange: ['#e5f5f9', '#2ca25f'],
     noValueColor: '#f0f0f0',
     showSelectionLabels: true,
+    colorClasses: 5,
     // Placement of map controls.
     sliderPosition: 'bottomleft',
     infoPosition: 'topright',
@@ -65,7 +66,7 @@
     this.valueRange = [_.min(_.pluck(this.options.geoData, 'Value')), _.max(_.pluck(this.options.geoData, 'Value'))];
     this.colorScale = chroma.scale(this.options.colorRange)
       .domain(this.valueRange)
-      .classes(9);
+      .classes(this.options.colorClasses);
 
     this.years = _.uniq(_.pluck(this.options.geoData, 'Year'));
     this.currentYear = this.years[0];
@@ -204,14 +205,14 @@
       this.map = L.map(this.element, {
         minZoom: this.options.minZoom,
         maxZoom: this.options.maxZoom,
+        zoomControl: false,
       });
       this.map.setView([0, 0], 0);
       this.zoomShowHide.addTo(this.map);
 
-      // Remove zoom control on mobile.
-      if (L.Browser.mobile) {
-        this.map.removeControl(this.map.zoomControl);
-      }
+      // Add zoom control.
+      this.zoomHome = L.Control.zoomHome();
+      this.map.addControl(this.zoomHome);
 
       // Add full-screen functionality.
       this.map.addControl(new L.Control.Fullscreen());
@@ -273,9 +274,9 @@
         this._features = L.DomUtil.create('ul', 'feature-list', this._div);
         this._legend = L.DomUtil.create('div', 'legend', this._div);
         this._legendValues = L.DomUtil.create('div', 'legend-values', this._div);
-        var grades = chroma.limits(plugin.valueRange, 'e', 9).reverse();
+        var grades = chroma.limits(plugin.valueRange, 'e', plugin.options.colorClasses - 1).reverse();
         for (var i = 0; i < grades.length; i++) {
-          this._legend.innerHTML += '<span class="info-swatch" style="background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
+          this._legend.innerHTML += '<span class="info-swatch" style="width:' + (100 / plugin.options.colorClasses) + '%; background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
         }
         this._legendValues.innerHTML += '<span class="legend-value left">' + plugin.valueRange[1] + '</span><span class="arrow left"></span>';
         this._legendValues.innerHTML += '<span class="legend-value right">' + plugin.valueRange[0] + '</span><span class="arrow right"></span>';
@@ -375,6 +376,8 @@
           plugin.zoomToFeature(plugin.getVisibleLayers());
           // Limit the panning to what we care about.
           plugin.map.setMaxBounds(plugin.getVisibleLayers().getBounds());
+          // Set the zoom home.
+          plugin.zoomHome.setHomeBounds();
           // Make sure the info pane is not too wide for the map.
           var $infoPane = $('.info.leaflet-control');
           var widthPadding = 20;
