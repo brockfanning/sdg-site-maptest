@@ -88,9 +88,10 @@
 
     // Add time series to GeoJSON data.
     addTimeSeries(geoJson, idProperty) {
+      var geoData = this.options.geoData;
       geoJson.features.forEach(function(feature) {
         var geocode = feature.properties[idProperty];
-        var records = _.where(this.options.geoData, { GeoCode: geocode });
+        var records = _.where(geoData, { GeoCode: geocode });
         records.forEach(function(record) {
           // Add the Year data into the properties.
           feature.properties[record.Year] = record.Value;
@@ -121,7 +122,7 @@
       // Show a tooltip if necessary.
       if (this.options.showSelectionLabels) {
         var tooltipContent = layer.feature.properties[layer.options.sdgLayer.nameProperty];
-        var tooltipData = this.getData(layer.feature.properties[layer.options.sdgLayer.idProperty]);
+        //var tooltipData = this.getData(layer.feature.properties[layer.options.sdgLayer.idProperty]);
         if (tooltipData) {
           tooltipContent += ': ' + tooltipData['Value'];
         }
@@ -177,34 +178,21 @@
       this.getAllLayers().eachLayer(function(layer) {
         layer.setStyle(function(feature) {
           return {
-            fillColor: plugin.getColor(feature.properties, layer.sdgOptions.idProperty),
+            fillColor: plugin.getColor(feature.properties),
           }
         });
       });
     },
 
-    // Get the local (CSV) data corresponding to a GeoJSON "feature" with the
-    // corresponding data.
-    getData: function(geocode) {
-      var conditions = {
-        GeoCode: geocode,
-        Year: this.currentYear,
-      }
-      var matches = _.where(this.options.geoData, conditions);
-      if (matches.length) {
-        return matches[0];
+    // Choose a color for a GeoJSON feature.
+    getColor: function(props) {
+      // Otherwise return a color based on the data.
+      if (props[this.currentYear]) {
+        return this.colorScale(props[this.currentYear]).hex();
       }
       else {
-        return false;
+        return this.options.noValueColor;
       }
-    },
-
-    // Choose a color for a GeoJSON feature.
-    getColor: function(props, idProperty) {
-      var thisID = props[idProperty];
-      // Otherwise return a color based on the data.
-      var localData = this.getData(thisID);
-      return (localData) ? this.colorScale(localData['Value']).hex() : this.options.noValueColor;
     },
 
     // Zoom to a feature.
@@ -224,8 +212,7 @@
       this.zoomShowHide.addTo(this.map);
 
       // Add zoom control.
-      this.zoomHome = L.Control.zoomHome();
-      this.map.addControl(this.zoomHome);
+      this.map.addControl(L.Control.zoomHome());
 
       // Add full-screen functionality.
       this.map.addControl(new L.Control.Fullscreen());
@@ -275,7 +262,7 @@
           plugin.selectedFeatures.forEach(function(layer) {
             var item = L.DomUtil.create('li', '', pane._features);
             var props = layer.feature.properties;
-            var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
+            //var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
             var name, value, bar;
             if (localData['Value']) {
               var fraction = (localData['Value'] - plugin.valueRange[0]) / (plugin.valueRange[1] - plugin.valueRange[0]);
@@ -323,16 +310,19 @@
 
         var geoJsons = arguments;
         for (var i in geoJsons) {
-          var layer = L.geoJson(geoJsons[i], {
+          var idProperty = plugin.options.geoLayers[i].idProperty;
+          var geoJson = plugin.addTimeSeries(geoJsons[i][0], idProperty);
+
+          var layer = L.geoJson(geoJson, {
             // Tack on the custom options here to access them later.
-            sdgLayer: plugin.options.geoLayers[i],
+            //sdgLayer: plugin.options.geoLayers[i],
             style: plugin.options.geoLayers[i].styleOptions,
             onEachFeature: onEachFeature,
           });
           layer.min_zoom = plugin.options.geoLayers[i].min_zoom;
           layer.max_zoom = plugin.options.geoLayers[i].max_zoom;
           // Store our custom options here, for easier access.
-          layer.sdgOptions = plugin.options.geoLayers[i];
+          //layer.sdgOptions = plugin.options.geoLayers[i];
           // Add the layer to the ZoomShowHide group.
           plugin.zoomShowHide.addLayer(layer);
         }
@@ -361,8 +351,6 @@
           plugin.zoomToFeature(plugin.getVisibleLayers());
           // Limit the panning to what we care about.
           plugin.map.setMaxBounds(plugin.getVisibleLayers().getBounds());
-          // Set the zoom home.
-          plugin.zoomHome.setHomeBounds();
           // Make sure the info pane is not too wide for the map.
           var $infoPane = $('.info.leaflet-control');
           var widthPadding = 20;
