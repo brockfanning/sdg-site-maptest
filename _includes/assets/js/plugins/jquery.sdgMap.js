@@ -86,6 +86,19 @@
 
   Plugin.prototype = {
 
+    // Add time series to GeoJSON data.
+    addTimeSeries(geoJson, idProperty) {
+      geoJson.features.forEach(function(feature) {
+        var geocode = feature.properties[idProperty];
+        var records = _.where(this.options.geoData, { GeoCode: geocode });
+        records.forEach(function(record) {
+          // Add the Year data into the properties.
+          feature.properties[record.Year] = record.Value;
+        });
+      });
+      return geoJson;
+    },
+
     // Is this feature selected.
     isFeatureSelected(check) {
       var ret = false;
@@ -218,49 +231,21 @@
       this.map.addControl(new L.Control.Fullscreen());
 
       // Add tile imagery.
-      //L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
+      L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
 
       // Because after this point, "this" rarely works.
       var plugin = this;
 
-      // Add the time dimension stuff.
-      // Hardcode the timeDimension to year intervals, because this is the SDGs.
-      var timeDimension = new L.TimeDimension({
-        period: 'P1Y',
-        timeInterval: this.years[0] + '-01-02/' + this.years[this.years.length - 1] + '-01-02',
-        currentTime: new Date(this.years[0] + '-01-02').getTime(),
-      });
-      // Save the timeDimension on the map so that it can be used by all layers.
-      this.map.timeDimension = timeDimension;
-      // Create the player. @TODO: Make these options configurable?
-      var player = new L.TimeDimension.Player({
-        transitionTime: 1000,
-        loop: false,
-        startOver:true
-      }, timeDimension);
-      // Create the control. @TODO: Make these options configurable?
-      var timeDimensionControlOptions = {
-        player: player,
-        timeDimension: timeDimension,
-        position: this.options.sliderPosition,
-        timeSliderDragUpdate: true,
-        speedSlider: false,
-      };
-      // We have to hijack the control to set the output format.
-      // @TODO: Create PR to make this configurable - this is a common need.
-      L.Control.TimeDimensionCustom = L.Control.TimeDimension.extend({
-        _getDisplayDateFormat: function(date){
-          return date.getFullYear();
+      // Add the year slider.
+      this.map.addControl(L.Control.yearSlider({
+        yearStart: this.years[0],
+        yearEnd: this.years[this.years.length - 1],
+        yearChangeCallback: function(e) {
+          plugin.currentYear = new Date(e.time).getFullYear();
+          plugin.updateColors();
+          plugin.info.update();
         }
-      });
-      var timeDimensionControl = new L.Control.TimeDimensionCustom(timeDimensionControlOptions);
-      this.map.addControl(timeDimensionControl);
-      // Listen to year changes to update the map colors.
-      timeDimension.on('timeload', function(e) {
-        plugin.currentYear = new Date(e.time).getFullYear();
-        plugin.updateColors();
-        plugin.info.update();
-      });
+      }));
 
       // Helper function to round values for the legend.
       function round(value) {
