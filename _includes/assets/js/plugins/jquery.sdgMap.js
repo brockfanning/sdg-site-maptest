@@ -22,9 +22,6 @@
     noValueColor: '#f0f0f0',
     showSelectionLabels: true,
     colorClasses: 5,
-    // Placement of map controls.
-    sliderPosition: 'bottomleft',
-    infoPosition: 'topright',
   };
 
   // Defaults for each geoLayer.
@@ -86,22 +83,29 @@
 
   Plugin.prototype = {
 
-    // Add time series to GeoJSON data.
-    addTimeSeries(geoJson, idProperty) {
+    // Add time series to GeoJSON data and normalize the name and geocode.
+    prepareGeoJson: function(geoJson, idProperty, nameProperty) {
       var geoData = this.options.geoData;
       geoJson.features.forEach(function(feature) {
         var geocode = feature.properties[idProperty];
+        var name = feature.properties[nameProperty];
+        // First add the time series data.
         var records = _.where(geoData, { GeoCode: geocode });
         records.forEach(function(record) {
           // Add the Year data into the properties.
           feature.properties[record.Year] = record.Value;
         });
+        // Next normalize the id and name.
+        feature.properties.name = name;
+        feature.properties.geocode = geocode;
+        delete feature.properties[idProperty];
+        delete feature.properties[nameProperty];
       });
       return geoJson;
     },
 
     // Is this feature selected.
-    isFeatureSelected(check) {
+    isFeatureSelected: function(check) {
       var ret = false;
       this.selectedFeatures.forEach(function(existing) {
         if (check._leaflet_id == existing._leaflet_id) {
@@ -112,19 +116,19 @@
     },
 
     // Select a feature.
-    selectFeature(layer) {
+    selectFeature: function(layer) {
       // Update the data structure for selections.
       this.selectedFeatures.push(layer);
       // Pan to selection.
       this.map.panTo(layer.getBounds().getCenter());
       // Update the style.
-      layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
+      //layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
       // Show a tooltip if necessary.
       if (this.options.showSelectionLabels) {
-        var tooltipContent = layer.feature.properties[layer.options.sdgLayer.nameProperty];
-        //var tooltipData = this.getData(layer.feature.properties[layer.options.sdgLayer.idProperty]);
+        var tooltipContent = layer.feature.properties.name;
+        var tooltipData = this.getData(layer.feature.properties);
         if (tooltipData) {
-          tooltipContent += ': ' + tooltipData['Value'];
+          tooltipContent += ': ' + tooltipData;
         }
         layer.bindTooltip(tooltipContent, {
           permanent: true,
@@ -139,7 +143,7 @@
     },
 
     // Unselect a feature.
-    unselectFeature(layer) {
+    unselectFeature: function(layer) {
       // Update the data structure for selections.
       var stillSelected = [];
       this.selectedFeatures.forEach(function(existing) {
@@ -150,7 +154,7 @@
       this.selectedFeatures = stillSelected;
 
       // Reset the feature's style.
-      layer.setStyle(layer.options.sdgLayer.styleOptions);
+      //layer.setStyle(layer.options.sdgLayer.styleOptions);
 
       // Remove the tooltip if necessary.
       if (layer.getTooltip()) {
@@ -184,11 +188,19 @@
       });
     },
 
+    // Get the data from a feature's properties, according to the current year.
+    getData: function(props) {
+      if (props[this.currentYear]) {
+        return props[this.currentYear];
+      }
+      return false;
+    },
+
     // Choose a color for a GeoJSON feature.
     getColor: function(props) {
-      // Otherwise return a color based on the data.
-      if (props[this.currentYear]) {
-        return this.colorScale(props[this.currentYear]).hex();
+      var data = this.getData(props);
+      if (data) {
+        return this.colorScale(data).hex();
       }
       else {
         return this.options.noValueColor;
@@ -262,17 +274,17 @@
           plugin.selectedFeatures.forEach(function(layer) {
             var item = L.DomUtil.create('li', '', pane._features);
             var props = layer.feature.properties;
-            //var localData = plugin.getData(props[layer.options.sdgLayer.idProperty]);
+            var data = plugin.getData(props);
             var name, value, bar;
-            if (localData['Value']) {
-              var fraction = (localData['Value'] - plugin.valueRange[0]) / (plugin.valueRange[1] - plugin.valueRange[0]);
+            if (data) {
+              var fraction = (data - plugin.valueRange[0]) / (plugin.valueRange[1] - plugin.valueRange[0]);
               var percentage = Math.round(fraction * 100);
-              name = '<span class="info-name">' + props[layer.options.sdgLayer.nameProperty] + '</span>';
-              value = '<span class="info-value" style="right: ' + percentage + '%">' + localData['Value'] + '</span>';
+              name = '<span class="info-name">' + props.name + '</span>';
+              value = '<span class="info-value" style="right: ' + percentage + '%">' + data + '</span>';
               bar = '<span class="info-bar" style="display: inline-block; width: ' + percentage + '%"></span>';
             }
             else {
-              name = '<span class="info-name info-no-value">' + props[layer.options.sdgLayer.nameProperty] + '</span>';
+              name = '<span class="info-name info-no-value">' + props.name + '</span>';
               value = '';
               bar = '';
             }
@@ -292,7 +304,7 @@
           });
         }
       }
-      info.setPosition(this.options.infoPosition);
+      info.setPosition('topright');
       info.addTo(this.map);
       this.info = info;
 
@@ -303,26 +315,21 @@
       $.when.apply($, geoURLs).done(function() {
 
         function onEachFeature(feature, layer) {
-          layer.on({
-            click: clickHandler,
-          });
+          layer.on('click', clickHandler);
         }
 
         var geoJsons = arguments;
         for (var i in geoJsons) {
           var idProperty = plugin.options.geoLayers[i].idProperty;
-          var geoJson = plugin.addTimeSeries(geoJsons[i][0], idProperty);
+          var nameProperty = plugin.options.geoLayers[i].nameProperty;
+          var geoJson = plugin.prepareGeoJson(geoJsons[i][0], idProperty, nameProperty);
 
           var layer = L.geoJson(geoJson, {
-            // Tack on the custom options here to access them later.
-            //sdgLayer: plugin.options.geoLayers[i],
             style: plugin.options.geoLayers[i].styleOptions,
             onEachFeature: onEachFeature,
           });
           layer.min_zoom = plugin.options.geoLayers[i].min_zoom;
           layer.max_zoom = plugin.options.geoLayers[i].max_zoom;
-          // Store our custom options here, for easier access.
-          //layer.sdgOptions = plugin.options.geoLayers[i];
           // Add the layer to the ZoomShowHide group.
           plugin.zoomShowHide.addLayer(layer);
         }
