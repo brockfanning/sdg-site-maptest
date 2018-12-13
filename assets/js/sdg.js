@@ -207,6 +207,9 @@
       this.selectionLegend = L.Control.selectionLegend(plugin);
       this.map.addControl(this.selectionLegend);
 
+      // Add the download button.
+      this.map.addControl(L.Control.downloadGeoJson(plugin));
+
       // At this point we need to load the GeoJSON layer/s.
       var geoURLs = this.options.geoLayers.map(function(item) {
         return $.getJSON(item.serviceUrl);
@@ -223,9 +226,13 @@
             style: plugin.options.styleNormal,
             onEachFeature: onEachFeature,
           });
+          // Set the "boundaries" for when this layer should be zoomed out of.
           layer.min_zoom = plugin.options.geoLayers[i].min_zoom;
           layer.max_zoom = plugin.options.geoLayers[i].max_zoom;
+          // Listen for when this layer gets zoomed out of.
           layer.on('remove', zoomoutHandler);
+          // Save the GeoJSON object for direct access (download) later.
+          layer.geoJsonObject = geoJson;
           // Add the layer to the ZoomShowHide group.
           plugin.zoomShowHide.addLayer(layer);
         }

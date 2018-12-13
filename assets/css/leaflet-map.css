@@ -15,6 +15,9 @@
   #main-content #map .leaflet-control .timecontrol-date {
     min-width: 80px;
     padding: 0 10px; }
+  #main-content #map .leaflet-control .download-geojson-button {
+    display: block;
+    cursor: pointer; }
   #main-content #map .selection-legend {
     background-color: rgba(150, 150, 150, 0.6);
     padding: 0;
