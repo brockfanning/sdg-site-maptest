@@ -29,6 +29,7 @@
     .selection-legend {
       background-color: rgba(150, 150, 150, 0.6);
       padding: 0;
+      width: 300px;
       .legend-swatches {
         height: 10px;
         .legend-swatch {
@@ -86,32 +87,35 @@
           }
           cursor: pointer;
           height: 23px;
-          .info-bar, .info-name, .info-value {
+          .selection-bar, .selection-name, .selection-value {
             height: 23px;
             position: absolute;
           }
-          .info-bar {
-            right: 0;
+          .selection-bar {
             border-radius: 2px 0 0 2px;
             background: white;
             z-index: 1;
           }
-          .info-name {
-            right: 0;
+          .selection-name {
             z-index: 2;
             padding: 3px 20px 3px 3px;
-            &.info-no-value {
+          }
+          &.no-value {
+            .selection-name {
               background: repeating-linear-gradient(45deg, #FFF, #FFF 2px, #CCC 2px, #CCC 4px);
             }
+            .selection-bar, .selection-value {
+              display: none;
+            }
           }
-          .info-value {
+          .selection-value {
             z-index: 2;
             margin-right: 5px;
             background-color: #ddd;
             padding: 3px;
             border-radius: 2px;
           }
-          .info-close {
+          .selection-close {
             top: 6px;
             right: 5px;
             position: absolute;
@@ -119,8 +123,6 @@
           }
         }
       }
-      text-align: right;
-      width: 300px;
     }
   }
 }

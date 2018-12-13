@@ -20,22 +20,27 @@
     // Visual/choropleth considerations.
     colorRange: chroma.brewer.BuGn,
     noValueColor: '#f0f0f0',
-    showSelectionLabels: true,
+    styleNormal: {
+      weight: 1,
+      opacity: 1,
+      color: '#888',
+      fillOpacity: 0.7
+    },
+    styleHighlighted: {
+      weight: 1,
+      opacity: 1,
+      color: '#111',
+      fillOpacity: 0.7
+    },
   };
 
   // Defaults for each geoLayer.
   var geoLayerDefaults = {
     min_zoom: 0,
     max_zoom: 20,
-    styleOptions: {
-      weight: 1,
-      opacity: 1,
-      color: '#888',
-      fillOpacity: 0.7
-    },
-    styleOptionsSelected: {
-      color: '#111',
-    },
+    serviceUrl: '[replace me]',
+    nameProperty: '[replace me]',
+    idProperty: '[replace me]',
   }
 
   function Plugin(element, options) {
@@ -91,27 +96,12 @@
       return geoJson;
     },
 
-    // Is this feature selected.
-    isFeatureSelected: function(check) {
-      var ret = false;
-      this.selectedFeatures.forEach(function(existing) {
-        if (check._leaflet_id == existing._leaflet_id) {
-          ret = true;
-        }
-      });
-      return ret;
-    },
-
     // Select a feature.
-    selectFeature: function(layer) {
-      // Update the data structure for selections.
-      this.selectedFeatures.push(layer);
-      // Pan to selection.
-      this.map.panTo(layer.getBounds().getCenter());
+    highlightFeature: function(layer) {
       // Update the style.
-      //layer.setStyle(layer.options.sdgLayer.styleOptionsSelected);
-      // Show a tooltip if necessary.
-      if (this.options.showSelectionLabels) {
+      layer.setStyle(this.options.styleHighlighted);
+      // Add a tooltip if not already there.
+      if (!layer.getTooltip()) {
         var tooltipContent = layer.feature.properties.name;
         var tooltipData = this.getData(layer.feature.properties);
         if (tooltipData) {
@@ -121,35 +111,18 @@
           permanent: true,
         }).addTo(this.map);
       }
-      // Update the info pane.
-      //this.info.update();
-      // Bring layer to front.
-      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
-      }
     },
 
     // Unselect a feature.
-    unselectFeature: function(layer) {
-      // Update the data structure for selections.
-      var stillSelected = [];
-      this.selectedFeatures.forEach(function(existing) {
-        if (layer._leaflet_id != existing._leaflet_id) {
-          stillSelected.push(existing);
-        }
-      });
-      this.selectedFeatures = stillSelected;
+    unhighlightFeature: function(layer) {
 
       // Reset the feature's style.
-      //layer.setStyle(layer.options.sdgLayer.styleOptions);
+      layer.setStyle(this.options.styleNormal);
 
       // Remove the tooltip if necessary.
       if (layer.getTooltip()) {
         layer.unbindTooltip();
       }
-
-      // Update the info pane.
-      //this.info.update();
     },
 
     // Get all of the GeoJSON layers.
@@ -194,11 +167,7 @@
       }
     },
 
-    // Zoom to a feature.
-    zoomToFeature: function(layer) {
-      this.map.fitBounds(layer.getBounds());
-    },
-
+    // Initialize the map itself.
     init: function() {
 
       // Create the map.
@@ -230,27 +199,19 @@
         yearChangeCallback: function(e) {
           plugin.currentYear = new Date(e.time).getFullYear();
           plugin.updateColors();
-          //plugin.info.update();
+          plugin.selectionLegend.update();
         }
       }));
 
       // Add the selection legend.
-      this.map.addControl(L.Control.selectionLegend({
-        valueRange: plugin.valueRange
-      }));
-
-      //info.addTo(this.map);
-      //this.info = info;
+      this.selectionLegend = L.Control.selectionLegend(plugin);
+      this.map.addControl(this.selectionLegend);
 
       // At this point we need to load the GeoJSON layer/s.
       var geoURLs = this.options.geoLayers.map(function(item) {
         return $.getJSON(item.serviceUrl);
       });
       $.when.apply($, geoURLs).done(function() {
-
-        function onEachFeature(feature, layer) {
-          layer.on('click', clickHandler);
-        }
 
         var geoJsons = arguments;
         for (var i in geoJsons) {
@@ -259,48 +220,88 @@
           var geoJson = plugin.prepareGeoJson(geoJsons[i][0], idProperty, nameProperty);
 
           var layer = L.geoJson(geoJson, {
-            style: plugin.options.geoLayers[i].styleOptions,
+            style: plugin.options.styleNormal,
             onEachFeature: onEachFeature,
           });
           layer.min_zoom = plugin.options.geoLayers[i].min_zoom;
           layer.max_zoom = plugin.options.geoLayers[i].max_zoom;
+          layer.on('remove', zoomoutHandler);
           // Add the layer to the ZoomShowHide group.
           plugin.zoomShowHide.addLayer(layer);
         }
         plugin.updateColors();
 
+        // The list of handlers to apply to each feature on a GeoJson layer.
+        function onEachFeature(feature, layer) {
+          layer.on('click', clickHandler);
+          layer.on('mouseover', mouseoverHandler);
+          layer.on('mouseout', mouseoutHandler);
+        }
         // Event handler for click/touch.
         function clickHandler(e) {
           var layer = e.target;
-          if (plugin.isFeatureSelected(layer)) {
-            plugin.unselectFeature(layer);
+          if (plugin.selectionLegend.isSelected(layer)) {
+            plugin.selectionLegend.removeSelection(layer);
+            plugin.unhighlightFeature(layer);
           }
           else {
-            plugin.selectFeature(layer);
+            plugin.selectionLegend.addSelection(layer);
+            plugin.highlightFeature(layer);
+            // Pan to selection.
+            plugin.map.panTo(layer.getBounds().getCenter());
+            // Bring layer to front.
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+              layer.bringToFront();
+            }
           }
+        }
+        // Event handler for mouseover.
+        function mouseoverHandler(e) {
+          var layer = e.target;
+          if (!plugin.selectionLegend.isSelected(layer)) {
+            plugin.highlightFeature(layer);
+          }
+        }
+        // Event handler for mouseout.
+        function mouseoutHandler(e) {
+          var layer = e.target;
+          if (!plugin.selectionLegend.isSelected(layer)) {
+            plugin.unhighlightFeature(layer);
+          }
+        }
+        // Event handler for when a geoJson layer if zoomed out of.
+        function zoomoutHandler(e) {
+          var geoJsonLayer = e.target;
+          // For desktop, we have to make sure that no features remain
+          // highlighted, as they might have been highlighted on mouseover.
+          geoJsonLayer.eachLayer(function(layer) {
+            if (!plugin.selectionLegend.isSelected(layer)) {
+              plugin.unhighlightFeature(layer);
+            }
+          })
         }
       });
 
-      // Leaflet needs "invalidateSize()" if it was originally rendered in a
-      // hidden element. So we need to do that when the tab is clicked.
+      // Perform some last-minute tasks when the user clicks on the "Map" tab.
       $('.map .nav-link').click(function() {
         setTimeout(function() {
           $('#map #loader-container').hide();
-          // Fix the size.
+          // Leaflet needs "invalidateSize()" if it was originally rendered in a
+          // hidden element. So we need to do that when the tab is clicked.
           plugin.map.invalidateSize();
           // Also zoom in/out as needed.
-          plugin.zoomToFeature(plugin.getVisibleLayers());
+          this.map.fitBounds(plugin.getVisibleLayers().getBounds());
           // Limit the panning to what we care about.
           plugin.map.setMaxBounds(plugin.getVisibleLayers().getBounds());
           // Make sure the info pane is not too wide for the map.
-          var $infoPane = $('.info.leaflet-control');
+          var $legendPane = $('.selection-legend.leaflet-control');
           var widthPadding = 20;
           var maxWidth = $('#map').width() - widthPadding;
-          if ($infoPane.width() > maxWidth) {
-            $infoPane.width(maxWidth);
+          if ($legendPane.width() > maxWidth) {
+            $legendPane.width(maxWidth);
           }
           // Make sure the map is not too high.
-          var heightPadding = 50;
+          var heightPadding = 75;
           var maxHeight = $(window).height() - heightPadding;
           if ($('#map').height() > maxHeight) {
             $('#map').height(maxHeight);

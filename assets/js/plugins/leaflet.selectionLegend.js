@@ -8,22 +8,25 @@
   "use strict";
 
   L.Control.SelectionLegend = L.Control.extend({
-    options: {
-      colorRange: chroma.brewer.BuGn,
-      valueRange: null,
-    },
 
-    initialize: function(options) {
-      L.setOptions(this, options);
+    initialize: function(plugin) {
       this.selections = [];
+      this.plugin = plugin;
     },
 
     addSelection: function(selection) {
-
+      this.selections.push(selection);
+      this.update();
     },
 
     removeSelection: function(selection) {
+      var index = this.selections.indexOf(selection);
+      this.selections.splice(index, 1);
+      this.update();
+    },
 
+    isSelected: function(selection) {
+      return (this.selections.indexOf(selection) !== -1);
     },
 
     onAdd: function() {
@@ -39,8 +42,8 @@
           '<span class="arrow right"></span>' +
         '</div>';
       var swatchTpl = '<span class="legend-swatch" style="width:{width}%; background:{color};"></span>';
-      var swatchWidth = 100 / this.options.colorRange.length;
-      var swatches = this.options.colorRange.map(function(swatchColor) {
+      var swatchWidth = 100 / this.plugin.options.colorRange.length;
+      var swatches = this.plugin.options.colorRange.map(function(swatchColor) {
         return L.Util.template(swatchTpl, {
           width: swatchWidth,
           color: swatchColor,
@@ -48,57 +51,60 @@
       }).join('');
       var div = L.DomUtil.create('div', 'selection-legend');
       div.innerHTML = L.Util.template(controlTpl, {
-        lowValue: this.options.valueRange[0],
-        highValue: this.options.valueRange[1],
+        lowValue: this.plugin.valueRange[0],
+        highValue: this.plugin.valueRange[1],
         legendSwatches: swatches,
       });
       return div;
     },
 
     update: function() {
-      return;
-      this._features.innerHTML = '';
-      var pane = this;
-      if (plugin.selectedFeatures.length) {
-        plugin.selectedFeatures.forEach(function(layer) {
-          var item = L.DomUtil.create('li', '', pane._features);
-          var props = layer.feature.properties;
-          var data = plugin.getData(props);
-          var name, value, bar;
-          if (data) {
-            var fraction = (data - plugin.valueRange[0]) / (plugin.valueRange[1] - plugin.valueRange[0]);
-            var percentage = Math.round(fraction * 100);
-            name = '<span class="info-name">' + props.name + '</span>';
-            value = '<span class="info-value" style="right: ' + percentage + '%">' + data + '</span>';
-            bar = '<span class="info-bar" style="display: inline-block; width: ' + percentage + '%"></span>';
-          }
-          else {
-            name = '<span class="info-name info-no-value">' + props.name + '</span>';
-            value = '';
-            bar = '';
-          }
-          item.innerHTML = bar + value + name + '<i class="info-close fa fa-remove"></i>';
-          $(item).click(function(e) {
-            plugin.unselectFeature(layer);
-          });
-          // Make sure that the value is not overlapping with the name.
-          var nameWidth = $(item).find('.info-name').width();
-          var barWidth = $(item).find('.info-bar').width();
-          if (barWidth < nameWidth) {
-            // If the bar is shorter than the name, bump out the value.
-            // Adding 25 makes it come out right.
-            var valueMargin = (nameWidth - barWidth) + 25;
-            $(item).find('.info-value').css('margin-right', valueMargin + 'px');
-          }
+      var selectionList = L.DomUtil.get('selection-list');
+      var selectionTpl = '' +
+        '<li class="{valueStatus}">' +
+          '<span class="selection-name">{name}</span>' +
+          '<span class="selection-value" style="left: {percentage}%;">{value}</span>' +
+          '<span class="selection-bar" style="width: {percentage}%;"></span>' +
+          '<i class="selection-close fa fa-remove"></i>' +
+        '</li>';
+      var plugin = this.plugin;
+      var valueRange = this.plugin.valueRange;
+      selectionList.innerHTML = this.selections.map(function(selection) {
+        var value = plugin.getData(selection.feature.properties);
+        var percentage, valueStatus;
+        if (value) {
+          valueStatus = 'has-value';
+          var fraction = (value - valueRange[0]) / (valueRange[1] - valueRange[0]);
+          percentage = Math.round(fraction * 100);
+        }
+        else {
+          value = '';
+          valueStatus = 'no-value';
+          percentage = 0;
+        }
+        return L.Util.template(selectionTpl, {
+          name: selection.feature.properties.name,
+          valueStatus: valueStatus,
+          percentage: percentage,
+          value: value,
         });
-      }
+      }).join('');
+
+      // Assign click behavior.
+      var control = this;
+      $('#selection-list li').click(function(e) {
+        var index = $(e.target).closest('li').index()
+        var selection = control.selections[index];
+        control.removeSelection(selection);
+        control.plugin.unhighlightFeature(selection);
+      });
     }
 
   });
 
   // Factory function for this class.
-  L.Control.selectionLegend = function(options) {
-    return new L.Control.SelectionLegend(options);
+  L.Control.selectionLegend = function(plugin) {
+    return new L.Control.SelectionLegend(plugin);
   };
 }());
 
