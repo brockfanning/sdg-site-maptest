@@ -18,19 +18,41 @@
       this.selections = [];
     },
 
-    onAdd: function() {
-      this._div = L.DomUtil.create('div', 'leaflet-control info');
-      this._features = L.DomUtil.create('ul', 'feature-list', this._div);
-      this._legend = L.DomUtil.create('div', 'legend', this._div);
-      this._legendValues = L.DomUtil.create('div', 'legend-values', this._div);
-      var swatchWidth = 100 / this.options.colorRange.length;
-      for (var i = 0; i < this.options.colorRange.length; i++) {
-        this._legend.innerHTML += '<span class="info-swatch" style="width:' + swatchWidth + '%; background:' + this.options.colorRange[i] + '"></span>';
-      }
-      this._legendValues.innerHTML += '<span class="legend-value left">' + this.options.valueRange[0] + '</span><span class="arrow left"></span>';
-      this._legendValues.innerHTML += '<span class="legend-value right">' + this.options.valueRange[1] + '</span><span class="arrow right"></span>';
+    addSelection: function(selection) {
 
-      return this._div;
+    },
+
+    removeSelection: function(selection) {
+
+    },
+
+    onAdd: function() {
+      var controlTpl = '' +
+        '<ul id="selection-list"></ul>' +
+        '<div class="legend-swatches">' +
+          '{legendSwatches}' +
+        '</div>' +
+        '<div class="legend-values">' +
+          '<span class="legend-value left">{lowValue}</span>' +
+          '<span class="arrow left"></span>' +
+          '<span class="legend-value right">{highValue}</span>' +
+          '<span class="arrow right"></span>' +
+        '</div>';
+      var swatchTpl = '<span class="legend-swatch" style="width:{width}%; background:{color};"></span>';
+      var swatchWidth = 100 / this.options.colorRange.length;
+      var swatches = this.options.colorRange.map(function(swatchColor) {
+        return L.Util.template(swatchTpl, {
+          width: swatchWidth,
+          color: swatchColor,
+        });
+      }).join('');
+      var div = L.DomUtil.create('div', 'selection-legend');
+      div.innerHTML = L.Util.template(controlTpl, {
+        lowValue: this.options.valueRange[0],
+        highValue: this.options.valueRange[1],
+        legendSwatches: swatches,
+      });
+      return div;
     },
 
     update: function() {

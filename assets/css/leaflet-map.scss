@@ -26,12 +26,12 @@
         padding: 0 10px;
       }
     }
-    .info {
+    .selection-legend {
       background-color: rgba(150, 150, 150, 0.6);
       padding: 0;
-      .legend {
+      .legend-swatches {
         height: 10px;
-        .info-swatch {
+        .legend-swatch {
           display: block;
           float: left;
           height: 10px;
@@ -74,7 +74,7 @@
           box-shadow: 1px 1px 1px 0px #666;
         }
       }
-      .feature-list {
+      #selection-list {
         list-style: none;
         margin-bottom: 0;
         padding-left: 0;
