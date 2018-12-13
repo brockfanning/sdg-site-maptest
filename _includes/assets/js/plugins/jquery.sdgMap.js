@@ -290,7 +290,7 @@
           // hidden element. So we need to do that when the tab is clicked.
           plugin.map.invalidateSize();
           // Also zoom in/out as needed.
-          this.map.fitBounds(plugin.getVisibleLayers().getBounds());
+          plugin.map.fitBounds(plugin.getVisibleLayers().getBounds());
           // Limit the panning to what we care about.
           plugin.map.setMaxBounds(plugin.getVisibleLayers().getBounds());
           // Make sure the info pane is not too wide for the map.
