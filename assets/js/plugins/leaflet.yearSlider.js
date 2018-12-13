@@ -7,23 +7,24 @@
 (function () {
   "use strict";
 
-  L.Control.YearSlider = L.Control.TimeDimension.extend({
-    options: {
-      // YearSlider options.
-      yearChangeCallback: null,
-      yearStart: 2000,
-      yearEnd: 2018,
-      // TimeDimensionControl options.
-      timeSliderDragUpdate: true,
-      speedSlider: false,
-      position: 'bottomleft',
-      // Player options.
-      playerOptions: {
-        transitionTime: 1000,
-        loop: false,
-        startOver: true
-      },
+  var defaultOptions = {
+    // YearSlider options.
+    yearChangeCallback: null,
+    yearStart: 2000,
+    yearEnd: 2018,
+    // TimeDimensionControl options.
+    timeSliderDragUpdate: true,
+    speedSlider: false,
+    position: 'bottomleft',
+    // Player options.
+    playerOptions: {
+      transitionTime: 1000,
+      loop: false,
+      startOver: true
     },
+  };
+
+  L.Control.YearSlider = L.Control.TimeDimension.extend({
 
     // Hijack the displayed date format.
     _getDisplayDateFormat: function(date){
@@ -34,6 +35,8 @@
 
   // Helper function to compose the full widget.
   L.Control.yearSlider = function(options) {
+    // Extend the defaults.
+    options = L.Util.extend(defaultOptions, options);
     // Hardcode the timeDimension to year intervals.
     options.timeDimension = new L.TimeDimension({
       period: 'P1Y',
