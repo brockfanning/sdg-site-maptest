@@ -25,6 +25,10 @@
         min-width: 80px;
         padding: 0 10px;
       }
+      .download-geojson-button {
+        display: block;
+        cursor: pointer;
+      }
     }
     .selection-legend {
       background-color: rgba(150, 150, 150, 0.6);

@@ -1,5 +1,5 @@
 /*
- * Leaflet legend bars.
+ * Leaflet selection legend.
  *
  * This is a Leaflet control designed to keep track of selected layers on a map
  * and visualize the selections as stacked bar graphs.
