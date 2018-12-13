@@ -18,10 +18,9 @@
     minZoom: 5,
     maxZoom: 10,
     // Visual/choropleth considerations.
-    colorRange: ['#e5f5f9', '#2ca25f'],
+    colorRange: chroma.brewer.BuGn,
     noValueColor: '#f0f0f0',
     showSelectionLabels: true,
-    colorClasses: 5,
   };
 
   // Defaults for each geoLayer.
@@ -40,8 +39,6 @@
   }
 
   function Plugin(element, options) {
-
-    this.viewObj = options.viewObj;
 
     this.element = element;
     this.options = $.extend(true, {}, defaults, options);
@@ -63,20 +60,10 @@
     this.valueRange = [_.min(_.pluck(this.options.geoData, 'Value')), _.max(_.pluck(this.options.geoData, 'Value'))];
     this.colorScale = chroma.scale(this.options.colorRange)
       .domain(this.valueRange)
-      .classes(this.options.colorClasses);
+      .classes(this.options.colorRange.length);
 
     this.years = _.uniq(_.pluck(this.options.geoData, 'Year'));
     this.currentYear = this.years[0];
-
-    // Track the selected GeoJSON features.
-    this.selectedFeatures = [];
-
-    // Use the ZoomShowHide library to control visibility ranges.
-    this.zoomShowHide = new ZoomShowHide();
-
-    // These variables will be set later.
-    this.map = null;
-
 
     this.init();
   }
@@ -95,7 +82,7 @@
           // Add the Year data into the properties.
           feature.properties[record.Year] = record.Value;
         });
-        // Next normalize the id and name.
+        // Next normalize the geocode and name.
         feature.properties.name = name;
         feature.properties.geocode = geocode;
         delete feature.properties[idProperty];
@@ -135,7 +122,7 @@
         }).addTo(this.map);
       }
       // Update the info pane.
-      this.info.update();
+      //this.info.update();
       // Bring layer to front.
       if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
@@ -162,7 +149,7 @@
       }
 
       // Update the info pane.
-      this.info.update();
+      //this.info.update();
     },
 
     // Get all of the GeoJSON layers.
@@ -221,6 +208,7 @@
         zoomControl: false,
       });
       this.map.setView([0, 0], 0);
+      this.zoomShowHide = new ZoomShowHide();
       this.zoomShowHide.addTo(this.map);
 
       // Add zoom control.
@@ -242,71 +230,17 @@
         yearChangeCallback: function(e) {
           plugin.currentYear = new Date(e.time).getFullYear();
           plugin.updateColors();
-          plugin.info.update();
+          //plugin.info.update();
         }
       }));
 
-      // Helper function to round values for the legend.
-      function round(value) {
-        return Math.round(value * 100) / 100;
-      }
+      // Add the selection legend.
+      this.map.addControl(L.Control.selectionLegend({
+        valueRange: plugin.valueRange
+      }));
 
-      // Add the info pane.
-      var info = L.control();
-      info.onAdd = function() {
-        this._div = L.DomUtil.create('div', 'leaflet-control info');
-        this._features = L.DomUtil.create('ul', 'feature-list', this._div);
-        this._legend = L.DomUtil.create('div', 'legend', this._div);
-        this._legendValues = L.DomUtil.create('div', 'legend-values', this._div);
-        var grades = chroma.limits(plugin.valueRange, 'e', plugin.options.colorClasses - 1).reverse();
-        for (var i = 0; i < grades.length; i++) {
-          this._legend.innerHTML += '<span class="info-swatch" style="width:' + (100 / plugin.options.colorClasses) + '%; background:' + plugin.colorScale(grades[i]).hex() + '"></span>';
-        }
-        this._legendValues.innerHTML += '<span class="legend-value left">' + plugin.valueRange[1] + '</span><span class="arrow left"></span>';
-        this._legendValues.innerHTML += '<span class="legend-value right">' + plugin.valueRange[0] + '</span><span class="arrow right"></span>';
-
-        return this._div;
-      }
-      info.update = function() {
-        this._features.innerHTML = '';
-        var pane = this;
-        if (plugin.selectedFeatures.length) {
-          plugin.selectedFeatures.forEach(function(layer) {
-            var item = L.DomUtil.create('li', '', pane._features);
-            var props = layer.feature.properties;
-            var data = plugin.getData(props);
-            var name, value, bar;
-            if (data) {
-              var fraction = (data - plugin.valueRange[0]) / (plugin.valueRange[1] - plugin.valueRange[0]);
-              var percentage = Math.round(fraction * 100);
-              name = '<span class="info-name">' + props.name + '</span>';
-              value = '<span class="info-value" style="right: ' + percentage + '%">' + data + '</span>';
-              bar = '<span class="info-bar" style="display: inline-block; width: ' + percentage + '%"></span>';
-            }
-            else {
-              name = '<span class="info-name info-no-value">' + props.name + '</span>';
-              value = '';
-              bar = '';
-            }
-            item.innerHTML = bar + value + name + '<i class="info-close fa fa-remove"></i>';
-            $(item).click(function(e) {
-              plugin.unselectFeature(layer);
-            });
-            // Make sure that the value is not overlapping with the name.
-            var nameWidth = $(item).find('.info-name').width();
-            var barWidth = $(item).find('.info-bar').width();
-            if (barWidth < nameWidth) {
-              // If the bar is shorter than the name, bump out the value.
-              // Adding 25 makes it come out right.
-              var valueMargin = (nameWidth - barWidth) + 25;
-              $(item).find('.info-value').css('margin-right', valueMargin + 'px');
-            }
-          });
-        }
-      }
-      info.setPosition('topright');
-      info.addTo(this.map);
-      this.info = info;
+      //info.addTo(this.map);
+      //this.info = info;
 
       // At this point we need to load the GeoJSON layer/s.
       var geoURLs = this.options.geoLayers.map(function(item) {
