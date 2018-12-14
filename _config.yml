@@ -85,4 +85,4 @@ defaults:
 plugins:
   - jekyll-remote-theme
 
-remote_theme: open-sdg/open-sdg
+remote_theme: brockfanning/open-sdg@leaflet-map
