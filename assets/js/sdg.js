@@ -186,6 +186,9 @@
       // Add full-screen functionality.
       this.map.addControl(new L.Control.Fullscreen());
 
+      // Add scale.
+      this.map.addControl(L.control.scale({position: 'bottomright'}));
+
       // Add tile imagery.
       L.tileLayer(this.options.tileURL, this.options.tileOptions).addTo(this.map);
 
@@ -495,13 +498,9 @@ var indicatorDataStore = function(dataUrl) {
   };
 };var indicatorModel = function (options) {
 
-  //Array.prototype.containsValue = function(val) {
-  //  return this.indexOf(val) != -1;
-  //};
-  // Change Array's prototype seems to be causing problems.
-  function arrayContainsValue(arr, val) {
-    return arr.indexOf(val) != -1;
-  }
+  Array.prototype.containsValue = function(val) {
+    return this.indexOf(val) != -1;
+  };
 
   // events:
   this.onDataComplete = new event(this);
@@ -780,12 +779,12 @@ var indicatorDataStore = function(dataUrl) {
 
   this.updateSelectedUnit = function(selectedUnit) {
     this.selectedUnit = selectedUnit;
-
+    
     // if fields are dependent on the unit, reset:
     this.getData({
       unitsChangeSeries: this.dataHasUnitSpecificFields
     });
-
+    
     this.onUnitsSelectedChanged.notify(selectedUnit);
   };
 
@@ -924,7 +923,7 @@ var indicatorDataStore = function(dataUrl) {
     matchedData = _.filter(matchedData, function(rowItem) {
       var matched = false;
       for(var fieldLoop = 0; fieldLoop < that.selectedFields.length; fieldLoop++) {
-        if (arrayContainsValue(that.selectedFields[fieldLoop].values, rowItem[that.selectedFields[fieldLoop].field])) {
+        if(that.selectedFields[fieldLoop].values.containsValue(rowItem[that.selectedFields[fieldLoop].field])) {
           matched = true;
           break;
         }
@@ -1011,7 +1010,7 @@ var indicatorDataStore = function(dataUrl) {
         return ds.data[yearIndex]
       })));
     });
-
+      
     this.onDataComplete.notify({
       datasetCountExceedsMax: datasetCountExceedsMax,
       datasets: datasetCountExceedsMax ? datasets.slice(0, maxDatasetCount) : datasets,
@@ -1078,7 +1077,7 @@ var indicatorDataStore = function(dataUrl) {
 
 indicatorModel.prototype = {
   initialise: function () {
-    this.getData({
+    this.getData({ 
       initial: true
     });
   },
@@ -2040,4 +2039,213 @@ $(function() {
 });/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
 "document"in self&&("classList"in document.createElement("_")&&(!document.createElementNS||"classList"in document.createElementNS("http://www.w3.org/2000/svg","g"))||!function(t){"use strict";if("Element"in t){var e="classList",n="prototype",i=t.Element[n],s=Object,r=String[n].trim||function(){return this.replace(/^\s+|\s+$/g,"")},o=Array[n].indexOf||function(t){for(var e=0,n=this.length;n>e;e++)if(e in this&&this[e]===t)return e;return-1},a=function(t,e){this.name=t,this.code=DOMException[t],this.message=e},c=function(t,e){if(""===e)throw new a("SYNTAX_ERR","An invalid or illegal string was specified");if(/\s/.test(e))throw new a("INVALID_CHARACTER_ERR","String contains an invalid character");return o.call(t,e)},l=function(t){for(var e=r.call(t.getAttribute("class")||""),n=e?e.split(/\s+/):[],i=0,s=n.length;s>i;i++)this.push(n[i]);this._updateClassName=function(){t.setAttribute("class",""+this)}},u=l[n]=[],h=function(){return new l(this)};if(a[n]=Error[n],u.item=function(t){return this[t]||null},u.contains=function(t){return t+="",-1!==c(this,t)},u.add=function(){var t,e=arguments,n=0,i=e.length,s=!1;do t=e[n]+"",-1===c(this,t)&&(this.push(t),s=!0);while(++n<i);s&&this._updateClassName()},u.remove=function(){var t,e,n=arguments,i=0,s=n.length,r=!1;do for(t=n[i]+"",e=c(this,t);-1!==e;)this.splice(e,1),r=!0,e=c(this,t);while(++i<s);r&&this._updateClassName()},u.toggle=function(t,e){t+="";var n=this.contains(t),i=n?e!==!0&&"remove":e!==!1&&"add";return i&&this[i](t),e===!0||e===!1?e:!n},u.toString=function(){return this.join(" ")},s.defineProperty){var f={get:h,enumerable:!0,configurable:!0};try{s.defineProperty(i,e,f)}catch(g){(void 0===g.number||-2146823252===g.number)&&(f.enumerable=!1,s.defineProperty(i,e,f))}}else s[n].__defineGetter__&&i.__defineGetter__(e,h)}}(self),function(){"use strict";var t=document.createElement("_");if(t.classList.add("c1","c2"),!t.classList.contains("c2")){var e=function(t){var e=DOMTokenList.prototype[t];DOMTokenList.prototype[t]=function(t){var n,i=arguments.length;for(n=0;i>n;n++)t=arguments[n],e.call(this,t)}};e("add"),e("remove")}if(t.classList.toggle("c3",!1),t.classList.contains("c3")){var n=DOMTokenList.prototype.toggle;DOMTokenList.prototype.toggle=function(t,e){return 1 in arguments&&!this.contains(t)==!e?e:n.call(this,t)}}t=null}());/*! modernizr 3.5.0 (Custom Build) | MIT *
  * https://modernizr.com/download/?-blobconstructor-localstorage-setclasses !*/
- !function(e,n,o){function s(e,n){return typeof e===n}function t(){var e,n,o,t,a,l,c;for(var f in i)if(i.hasOwnProperty(f)){if(e=[],n=i[f],n.name&&(e.push(n.name.toLowerCase()),n.options&&n.options.aliases&&n.options.aliases.length))for(o=0;o<n.options.aliases.length;o++)e.push(n.options.aliases[o].toLowerCase());for(t=s(n.fn,"function")?n.fn():n.fn,a=0;a<e.length;a++)l=e[a],c=l.split("."),1===c.length?Modernizr[c[0]]=t:(!Modernizr[c[0]]||Modernizr[c[0]]instanceof Boolean||(Modernizr[c[0]]=new Boolean(Modernizr[c[0]])),Modernizr[c[0]][c[1]]=t),r.push((t?"":"no-")+c.join("-"))}}function a(e){var n=c.className,o=Modernizr._config.classPrefix||"";if(f&&(n=n.baseVal),Modernizr._config.enableJSClass){var s=new RegExp("(^|\\s)"+o+"no-js(\\s|$)");n=n.replace(s,"$1"+o+"js$2")}Modernizr._config.enableClasses&&(n+=" "+o+e.join(" "+o),f?c.className.baseVal=n:c.className=n)}var r=[],i=[],l={_version:"3.5.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,n){var o=this;setTimeout(function(){n(o[e])},0)},addTest:function(e,n,o){i.push({name:e,fn:n,options:o})},addAsyncTest:function(e){i.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=l,Modernizr=new Modernizr,Modernizr.addTest("blobconstructor",function(){try{return!!new Blob}catch(e){return!1}},{aliases:["blob-constructor"]}),Modernizr.addTest("localstorage",function(){var e="modernizr";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch(n){return!1}});var c=n.documentElement,f="svg"===c.nodeName.toLowerCase();t(),a(r),delete l.addTest,delete l.addAsyncTest;for(var u=0;u<Modernizr._q.length;u++)Modernizr._q[u]();e.Modernizr=Modernizr}(window,document);
+ !function(e,n,o){function s(e,n){return typeof e===n}function t(){var e,n,o,t,a,l,c;for(var f in i)if(i.hasOwnProperty(f)){if(e=[],n=i[f],n.name&&(e.push(n.name.toLowerCase()),n.options&&n.options.aliases&&n.options.aliases.length))for(o=0;o<n.options.aliases.length;o++)e.push(n.options.aliases[o].toLowerCase());for(t=s(n.fn,"function")?n.fn():n.fn,a=0;a<e.length;a++)l=e[a],c=l.split("."),1===c.length?Modernizr[c[0]]=t:(!Modernizr[c[0]]||Modernizr[c[0]]instanceof Boolean||(Modernizr[c[0]]=new Boolean(Modernizr[c[0]])),Modernizr[c[0]][c[1]]=t),r.push((t?"":"no-")+c.join("-"))}}function a(e){var n=c.className,o=Modernizr._config.classPrefix||"";if(f&&(n=n.baseVal),Modernizr._config.enableJSClass){var s=new RegExp("(^|\\s)"+o+"no-js(\\s|$)");n=n.replace(s,"$1"+o+"js$2")}Modernizr._config.enableClasses&&(n+=" "+o+e.join(" "+o),f?c.className.baseVal=n:c.className=n)}var r=[],i=[],l={_version:"3.5.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,n){var o=this;setTimeout(function(){n(o[e])},0)},addTest:function(e,n,o){i.push({name:e,fn:n,options:o})},addAsyncTest:function(e){i.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=l,Modernizr=new Modernizr,Modernizr.addTest("blobconstructor",function(){try{return!!new Blob}catch(e){return!1}},{aliases:["blob-constructor"]}),Modernizr.addTest("localstorage",function(){var e="modernizr";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch(n){return!1}});var c=n.documentElement,f="svg"===c.nodeName.toLowerCase();t(),a(r),delete l.addTest,delete l.addAsyncTest;for(var u=0;u<Modernizr._q.length;u++)Modernizr._q[u]();e.Modernizr=Modernizr}(window,document);/*
+ * Leaflet download map.
+ *
+ * This is a Leaflet control for downloading the current GeoJSON layer.
+ */
+(function () {
+  "use strict";
+
+  L.Control.DownloadGeoJson = L.Control.extend({
+
+    initialize: function(plugin) {
+      this.plugin = plugin;
+      this.setPosition('topleft');
+    },
+
+    onAdd: function() {
+      var div = L.DomUtil.create('div', 'download-geojson leaflet-bar');
+      div.innerHTML = '<a id="download-geojson-anchor-elem" style="display:none;"></a>';
+      var trigger = L.DomUtil.create('a', 'download-geojson-button leaflet-bar-part', div);
+      trigger.innerHTML = '<i aria-hidden title="Download" class="fa fa-download"></i>' +
+        '<span class="visuallyhidden">Download</span>';
+      var plugin = this.plugin;
+      L.DomEvent.on(trigger, 'click', (function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        plugin.getVisibleLayers().eachLayer(function(layer) {
+          var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(layer.geoJsonObject));
+          var dlAnchorElem = document.getElementById('download-geojson-anchor-elem');
+          dlAnchorElem.setAttribute('href', dataStr);
+          dlAnchorElem.setAttribute('download', 'map.geo.json');
+          dlAnchorElem.click();
+        });
+      }));
+
+      return div;
+    },
+
+  });
+
+  // Factory function for this class.
+  L.Control.downloadGeoJson = function(plugin) {
+    return new L.Control.DownloadGeoJson(plugin);
+  };
+}());
+
+/*
+ * Leaflet selection legend.
+ *
+ * This is a Leaflet control designed to keep track of selected layers on a map
+ * and visualize the selections as stacked bar graphs.
+ */
+(function () {
+  "use strict";
+
+  L.Control.SelectionLegend = L.Control.extend({
+
+    initialize: function(plugin) {
+      this.selections = [];
+      this.plugin = plugin;
+    },
+
+    addSelection: function(selection) {
+      this.selections.push(selection);
+      this.update();
+    },
+
+    removeSelection: function(selection) {
+      var index = this.selections.indexOf(selection);
+      this.selections.splice(index, 1);
+      this.update();
+    },
+
+    isSelected: function(selection) {
+      return (this.selections.indexOf(selection) !== -1);
+    },
+
+    onAdd: function() {
+      var controlTpl = '' +
+        '<ul id="selection-list"></ul>' +
+        '<div class="legend-swatches">' +
+          '{legendSwatches}' +
+        '</div>' +
+        '<div class="legend-values">' +
+          '<span class="legend-value left">{lowValue}</span>' +
+          '<span class="arrow left"></span>' +
+          '<span class="legend-value right">{highValue}</span>' +
+          '<span class="arrow right"></span>' +
+        '</div>';
+      var swatchTpl = '<span class="legend-swatch" style="width:{width}%; background:{color};"></span>';
+      var swatchWidth = 100 / this.plugin.options.colorRange.length;
+      var swatches = this.plugin.options.colorRange.map(function(swatchColor) {
+        return L.Util.template(swatchTpl, {
+          width: swatchWidth,
+          color: swatchColor,
+        });
+      }).join('');
+      var div = L.DomUtil.create('div', 'selection-legend');
+      div.innerHTML = L.Util.template(controlTpl, {
+        lowValue: this.plugin.valueRange[0],
+        highValue: this.plugin.valueRange[1],
+        legendSwatches: swatches,
+      });
+      return div;
+    },
+
+    update: function() {
+      var selectionList = L.DomUtil.get('selection-list');
+      var selectionTpl = '' +
+        '<li class="{valueStatus}">' +
+          '<span class="selection-name">{name}</span>' +
+          '<span class="selection-value" style="left: {percentage}%;">{value}</span>' +
+          '<span class="selection-bar" style="width: {percentage}%;"></span>' +
+          '<i class="selection-close fa fa-remove"></i>' +
+        '</li>';
+      var plugin = this.plugin;
+      var valueRange = this.plugin.valueRange;
+      selectionList.innerHTML = this.selections.map(function(selection) {
+        var value = plugin.getData(selection.feature.properties);
+        var percentage, valueStatus;
+        if (value) {
+          valueStatus = 'has-value';
+          var fraction = (value - valueRange[0]) / (valueRange[1] - valueRange[0]);
+          percentage = Math.round(fraction * 100);
+        }
+        else {
+          value = '';
+          valueStatus = 'no-value';
+          percentage = 0;
+        }
+        return L.Util.template(selectionTpl, {
+          name: selection.feature.properties.name,
+          valueStatus: valueStatus,
+          percentage: percentage,
+          value: value,
+        });
+      }).join('');
+
+      // Assign click behavior.
+      var control = this;
+      $('#selection-list li').click(function(e) {
+        var index = $(e.target).closest('li').index()
+        var selection = control.selections[index];
+        control.removeSelection(selection);
+        control.plugin.unhighlightFeature(selection);
+      });
+    }
+
+  });
+
+  // Factory function for this class.
+  L.Control.selectionLegend = function(plugin) {
+    return new L.Control.SelectionLegend(plugin);
+  };
+}());
+
+/*
+ * Leaflet year Slider.
+ *
+ * This is merely a specific configuration of Leaflet of L.TimeDimension.
+ * See here: https://github.com/socib/Leaflet.TimeDimension
+ */
+(function () {
+  "use strict";
+
+  var defaultOptions = {
+    // YearSlider options.
+    yearChangeCallback: null,
+    yearStart: 2000,
+    yearEnd: 2018,
+    // TimeDimensionControl options.
+    timeSliderDragUpdate: true,
+    speedSlider: false,
+    position: 'bottomleft',
+    // Player options.
+    playerOptions: {
+      transitionTime: 1000,
+      loop: false,
+      startOver: true
+    },
+  };
+
+  L.Control.YearSlider = L.Control.TimeDimension.extend({
+
+    // Hijack the displayed date format.
+    _getDisplayDateFormat: function(date){
+      return date.getFullYear();
+    }
+
+  });
+
+  // Helper function to compose the full widget.
+  L.Control.yearSlider = function(options) {
+    // Extend the defaults.
+    options = L.Util.extend(defaultOptions, options);
+    // Hardcode the timeDimension to year intervals.
+    options.timeDimension = new L.TimeDimension({
+      period: 'P1Y',
+      timeInterval: options.yearStart + '-01-02/' + options.yearEnd + '-01-02',
+      currentTime: new Date(options.yearStart + '-01-02').getTime(),
+    });
+    // Create the player.
+    options.player = new L.TimeDimension.Player(options.playerOptions, options.timeDimension);
+    // Listen for time changes.
+    if (typeof options.yearChangeCallback === 'function') {
+      options.timeDimension.on('timeload', options.yearChangeCallback);
+    };
+    // Return the control.
+    return new L.Control.YearSlider(options);
+  };
+}());
