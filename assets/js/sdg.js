@@ -1137,7 +1137,7 @@ var mapView = function () {
       ],
       tileURL: 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
       tileOptions: {
-        id: 'map.light',
+        id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiYnJvY2tmYW5uaW5nMSIsImEiOiJjaXplbmgzczgyMmRtMnZxbzlmbGJmdW9pIn0.LU-BYMX69uu3eGgk0Imibg',
         attribution: '<a href="https://www.mapbox.com">Mapbox</a> | <a href="http://geoportal.statistics.gov.uk/">ONS</a>',
       },
