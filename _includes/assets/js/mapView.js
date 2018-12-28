@@ -14,6 +14,7 @@ var mapView = function () {
           serviceUrl: 'https://opendata.arcgis.com/datasets/4fcca2a47fed4bfaa1793015a18537ac_4.geojson',
           nameProperty: 'rgn17nm',
           idProperty: 'rgn17cd',
+          staticBorders: true,
         },
         {
           min_zoom: 7,
