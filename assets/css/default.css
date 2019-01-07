@@ -1410,6 +1410,9 @@ body.contrast-high {
   #main-content #map .leaflet-control .timecontrol-date {
     min-width: 80px;
     padding: 0 10px; }
+  @media only screen and (max-width: 680px) {
+    #main-content #map .leaflet-control .timecontrol-slider {
+      display: none; } }
   #main-content #map .leaflet-control .download-geojson-button {
     display: block;
     cursor: pointer; }
