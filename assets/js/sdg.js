@@ -551,7 +551,7 @@ function imageFix(contrast) {
   } else {
     // Remove high-contrast
     _.each($('img[src*=high-contrast]'), function(goalImage){
-      $(goalImage).attr('src', $(goalImage).attr('src').replace('high-contrast', ''));
+      $(goalImage).attr('src', $(goalImage).attr('src').replace('high-contrast/', ''));
     })
   }
 };
