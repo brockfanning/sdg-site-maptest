@@ -60,7 +60,8 @@ $collapsed-navbar-height: $navbar-height - 30;
       margin: 6px 10px 0 0;
       list-style-type: none;
       li {
-        padding: 4px;
+        margin-right: 6px;
+        padding: 4px 6px;
         display: inline;
         border-radius: 10px;
       }
