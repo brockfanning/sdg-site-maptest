@@ -89,7 +89,8 @@ header {
   margin: 6px 10px 0 0;
   list-style-type: none; }
   .results .indicator-cards .tags li {
-    padding: 4px;
+    margin-right: 6px;
+    padding: 4px 6px;
     display: inline;
     border-radius: 10px; }
 .results .indicator-cards .match {
@@ -905,7 +906,8 @@ h5 + .btn-download {
     margin: 6px 10px 0 0;
     list-style-type: none; }
     #main-content.goal-indicators .indicator-cards .tags li {
-      padding: 4px;
+      margin-right: 6px;
+      padding: 4px 6px;
       display: inline;
       border-radius: 10px; }
   #main-content.goal-indicators .indicator-cards .match {
