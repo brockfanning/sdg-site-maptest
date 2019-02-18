@@ -63,12 +63,3 @@ workflows:
           filters:
             branches:
               only: develop
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only: develop
-    jobs:
-      - deploy_staging
