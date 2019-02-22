@@ -8,3 +8,5 @@ gem "hash-joiner"
 gem "jekyll-open-sdg-plugins", "~> 0.0.1"
 
 gem "jekyll-drill", "~> 0.0.1"
+
+gem "jekyll-get-json", "~> 0.0.1"

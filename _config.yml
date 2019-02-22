@@ -15,7 +15,7 @@ environment: staging
 remotedatabaseurl: "http://brock.tips/sdg-data-maptest"
 # permalink: /news/:year/:month/:day/:title.html
 
-jekyll_get_data:
+jekyll_get_json:
   - data: meta
     json: 'http://brock.tips/sdg-data-maptest/meta/all.json'
     # cache: true
@@ -101,6 +101,7 @@ plugins:
   - jekyll-remote-theme
   - jekyll-open-sdg-plugins
   - jekyll-drill
+  - jekyll-get-json
 
 remote_theme: open-sdg/open-sdg@0.3.0
 
