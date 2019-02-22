@@ -11,6 +11,7 @@ GEM
     colorator (1.1.0)
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
+    deep_merge (1.2.1)
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
@@ -47,6 +48,9 @@ GEM
       rouge (>= 1.7, < 4)
       safe_yaml (~> 1.0)
     jekyll-drill (0.0.1)
+      jekyll (~> 3.0)
+    jekyll-get-json (0.0.1)
+      deep_merge (~> 1.2)
       jekyll (~> 3.0)
     jekyll-open-sdg-plugins (0.0.1)
       jekyll (~> 3.0)
@@ -99,6 +103,7 @@ DEPENDENCIES
   html-proofer
   jekyll (= 3.8.4)
   jekyll-drill (~> 0.0.1)
+  jekyll-get-json (~> 0.0.1)
   jekyll-open-sdg-plugins (~> 0.0.1)
   jekyll-remote-theme
 
