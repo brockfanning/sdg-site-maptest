@@ -54,7 +54,7 @@ exclude: [vendor, scripts, remotedata]
 # International Support
 # Eg name: Australia and adjective: Australian
 country:
-  name: Brock
+  name: general.goals
   adjective: Brock
 
 # Pages
@@ -99,6 +99,8 @@ defaults:
 
 plugins:
   - jekyll-remote-theme
+  - jekyll-open-sdg-plugins
+  - jekyll-drill
 
 remote_theme: open-sdg/open-sdg@0.3.0
 
