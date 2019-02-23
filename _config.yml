@@ -100,7 +100,6 @@ defaults:
 plugins:
   - jekyll-remote-theme
   - jekyll-open-sdg-plugins
-  - jekyll-drill
   - jekyll-get-json
 
 remote_theme: open-sdg/open-sdg@0.3.0
